@@ -24,3 +24,4 @@ SlAiCourse/Build/
 *.xcworkspace
 *.vsconfig
 
+/SlAiCourse/Content/Res/PolygonAdventure/Maps/Demonstration.umap
