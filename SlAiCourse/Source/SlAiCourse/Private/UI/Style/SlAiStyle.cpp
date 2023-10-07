@@ -38,6 +38,6 @@ const ISlateStyle& SlAiStyle::Get()
 TSharedRef<FSlateStyleSet> SlAiStyle::Create()
 {
 	TSharedRef<FSlateStyleSet> styleRef = FSlateGameResources::New(SlAiStyle::GetStyleSetName(),"/Game/UI/Style","/Game/UI/Style");
-	styleRef->Set("MenuItemFont",FSlateFontInfo("Roboto-Regular.ttf",50));
-	return  styleRef;
+	// styleRef->Set("MenuItemFont",FSlateFontInfo("Roboto-Regular.ttf",50));
+	return styleRef;
 }

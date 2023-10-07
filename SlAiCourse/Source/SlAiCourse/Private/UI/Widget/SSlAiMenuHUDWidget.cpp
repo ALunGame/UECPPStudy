@@ -33,13 +33,12 @@ void SSlAiMenuHUDWidget::Construct(const FArguments& InArgs)
 				.Image(&MenuStyle->MenuHUDBackgroundBrush)
 			]
 
-			//菜单图片
+			//菜单
 			+SOverlay::Slot()
 			.HAlign(HAlign_Center)
 			.VAlign(VAlign_Center)
 			[
-				SNew(SImage)
-				.Image(&MenuStyle->MenuBackgroundBrush)
+				SAssignNew(MenuWidget,SSlAiMenuWidget)
 			]
 		]
 	]; 

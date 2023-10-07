@@ -24,14 +24,35 @@ struct SLAICOURSE_API FSlAiMenuStyle : public FSlateWidgetStyle
 	static const FName TypeName;
 	virtual const FName GetTypeName() const override { return TypeName; };
 	static const FSlAiMenuStyle& GetDefault();
-
+	
 	//整个游戏的背景图
-	UPROPERTY(EditAnywhere,Category = MenuHUD)
+	UPROPERTY(EditAnywhere,Category = Menu)
 		FSlateBrush MenuHUDBackgroundBrush;
 
 	//游戏菜单的背景图
-	UPROPERTY(EditAnywhere,Category = MenuHUD)
-	FSlateBrush MenuBackgroundBrush;
+	UPROPERTY(EditAnywhere,Category = Menu)
+		FSlateBrush MenuBackgroundBrush;
+
+
+	//Menu左侧图标
+	UPROPERTY(EditAnywhere,Category = Menu)
+		FSlateBrush LeftIconBrush;
+
+	/*
+	*Menu左侧图标
+	*/
+	UPROPERTY(EditAnywhere,Category = Menu)
+		FSlateBrush RightIconBrush;
+
+	/*
+	*Menu标题Boder
+	*/
+	UPROPERTY(EditAnywhere,Category = Menu)
+		FSlateBrush TitleBorderBrush;
+
+	//字体
+	UPROPERTY(EditAnywhere,Category = Menu)
+		FSlateFontInfo FontInfo;
 };
 
 /**

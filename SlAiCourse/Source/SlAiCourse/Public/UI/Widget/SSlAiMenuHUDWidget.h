@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SSlAiMenuWidget.h"
 #include "Widgets/SCompoundWidget.h"
 
 /**
@@ -30,4 +31,7 @@ private:
 
 	//DPI缩放系数
 	TAttribute<float> UIScaler;
+
+	//菜单指针
+	TSharedPtr<SSlAiMenuWidget> MenuWidget;
 };
