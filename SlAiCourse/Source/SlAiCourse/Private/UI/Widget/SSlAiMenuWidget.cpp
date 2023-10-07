@@ -3,8 +3,10 @@
 
 #include "SSlAiMenuWidget.h"
 
+#include "SlAiMenuItemWidget.h"
 #include "SlAiMenuWidgetStyle.h"
 #include "SlAiStyle.h"
+#include "SlAiTypes.h"
 #include "SlateOptMacros.h"
 
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
@@ -71,8 +73,31 @@ void SSlAiMenuWidget::Construct(const FArguments& InArgs)
 					]
 				]
 			]
+
+			+SOverlay::Slot()
+			.HAlign(HAlign_Center)
+			.VAlign(VAlign_Top)
+			.Padding(FMargin(0.f,130.f,0.f,0.f))
+			[
+				SAssignNew(ContentBox,SVerticalBox)
+			]
 		]
-	]; 
+		
+	];
+
+	//添加按钮
+	ContentBox->AddSlot()
+	[
+		SNew(SlAiMenuItemWidget)
+		.ItemText(NSLOCTEXT("SlAiMenu","StartGame","StartGame"))
+		.ItemType(EMenuItem::StartGame)
+		.OnClicked(this,&SSlAiMenuWidget::MenuItemOnClicked)
+	];
+}
+
+void SSlAiMenuWidget::MenuItemOnClicked(EMenuItem::Type ItemType)
+{
+	TitleText->SetText(NSLOCTEXT("SlAiMenu","StartGame","StartGame"));
 }
 
 END_SLATE_FUNCTION_BUILD_OPTIMIZATION

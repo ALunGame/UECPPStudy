@@ -17,11 +17,11 @@ public:
 	
 	static void Init();
 
-	void ChangeLocalizationCulTure(ECultrueTeam newCulture);
+	void ChangeLocalizationCulture(ECultureTeam newCulture);
 
 public:
 	//当前语言
-	ECultrueTeam CurCultrue;
+	ECultureTeam CurCultrue;
 
 private:
 	static TSharedRef<SlAiDataHandle> Create();

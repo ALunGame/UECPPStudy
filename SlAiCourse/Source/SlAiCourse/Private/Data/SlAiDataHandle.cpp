@@ -26,14 +26,14 @@ TSharedRef<SlAiDataHandle> SlAiDataHandle::Create()
 	return dataRef;
 }
 
-void SlAiDataHandle::ChangeLocalizationCulTure(ECultrueTeam newCulture)
+void SlAiDataHandle::ChangeLocalizationCulture(ECultureTeam newCulture)
 {
 	switch (newCulture)
 	{
-		case ECultrueTeam::EN:
+		case ECultureTeam::EN:
 			FInternationalization::Get().SetCurrentCulture(TEXT("en"));
 			break;
-		case ECultrueTeam::ZH:
+		case ECultureTeam::ZH:
 			FInternationalization::Get().SetCurrentCulture(TEXT("zh"));
 			break;
 	}

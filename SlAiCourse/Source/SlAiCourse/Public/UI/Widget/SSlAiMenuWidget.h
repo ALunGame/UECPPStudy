@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "SCompoundWidget.h"
+#include "SlAiTypes.h"
 
 /**
  * 
@@ -21,6 +22,11 @@ public:
 	void Construct(const FArguments& InArgs);
 
 private:
+
+	//绑定到各个按钮点击
+	void MenuItemOnClicked(EMenuItem::Type ItemType);
+
+private:
 		
 	//获取Menu样式
 	const struct FSlAiMenuStyle *MenuStyle;
@@ -30,4 +36,7 @@ private:
 
 	//标题
 	TSharedPtr<STextBlock> TitleText;
+
+	//垂直列表
+	TSharedPtr<SVerticalBox> ContentBox;
 };
