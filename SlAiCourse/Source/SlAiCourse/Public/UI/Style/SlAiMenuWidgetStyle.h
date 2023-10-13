@@ -60,6 +60,24 @@ struct SLAICOURSE_API FSlAiMenuStyle : public FSlateWidgetStyle
 	UPROPERTY(EditAnywhere,Category = MenuItem)
 		FSlateBrush MenuItemBrush;
 
+	/*
+	*GameSet
+	*/
+	UPROPERTY(EditAnywhere,Category = GameOption)
+		FSlateBrush GameOptionBGBrush;
+
+	/*
+	*GameSet
+	*/
+	UPROPERTY(EditAnywhere,Category = GameOption)
+		FSlateBrush CheckedBrush;
+
+	/*
+	*GameSet
+	*/
+	UPROPERTY(EditAnywhere,Category = GameOption)
+		FSlateBrush UnCheckedBrush;
+
 	//60号字体
 	UPROPERTY(EditAnywhere,Category = Common)
 		FSlateFontInfo Font_60;
@@ -72,6 +90,25 @@ struct SLAICOURSE_API FSlAiMenuStyle : public FSlateWidgetStyle
 	UPROPERTY(EditAnywhere,Category = Common)
 		FSlateFontInfo Font_30;
 
+	//黑色字
+	UPROPERTY(EditAnywhere,Category = Common)
+		FLinearColor FontColor_Black;
+
+	//白色字
+	UPROPERTY(EditAnywhere,Category = Common)
+		FLinearColor FontColor_White;
+
+	//Slider背景
+	UPROPERTY(EditAnywhere,Category = GameOption)
+		FSlateBrush SliderBarBrush;
+
+	//SliderStyle
+	UPROPERTY(EditAnywhere,Category = GameOption)
+		FSliderStyle SliderStyle;
+
+	//SliderStyle
+	UPROPERTY(EditAnywhere,Category = GameOption)
+		FSliderStyle SoundSliderStyle;
 };
 
 /**

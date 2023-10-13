@@ -19,11 +19,32 @@ public:
 
 	void ChangeLocalizationCulture(ECultureTeam newCulture);
 
+	void SetMusicVolume(float newValue);
+	
+	void SetSoundVolume(float newValue);
+
 public:
 	//当前语言
-	ECultureTeam CurCultrue;
+	ECultureTeam CurCulture;
+	//音量
+	float MusicVolume;
+	//音效
+	float SoundVolume;
+	//存档数据
+	TArray<FString> RecordDataList;
 
 private:
+	
 	static TSharedRef<SlAiDataHandle> Create();
+
+	template<typename T>
+	FString EnumToString(T EnumValue);
+	
+	template<typename T>
+	T StringToEnum(FString Value);
+
+	void InitRecordData();
+	
 	static TSharedPtr<SlAiDataHandle> DataHandleInstance;
 };
+

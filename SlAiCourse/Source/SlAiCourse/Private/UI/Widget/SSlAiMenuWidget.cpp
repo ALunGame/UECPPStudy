@@ -3,11 +3,14 @@
 
 #include "SSlAiMenuWidget.h"
 
+#include "SlAiDataHandle.h"
+#include "SlAiGameOptionWidget.h"
 #include "SlAiMenuItemWidget.h"
 #include "SlAiMenuWidgetStyle.h"
 #include "SlAiStyle.h"
 #include "SlAiTypes.h"
 #include "SlateOptMacros.h"
+#include "Common/SlAiHelper.h"
 
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 
@@ -15,11 +18,6 @@ void SSlAiMenuWidget::Construct(const FArguments& InArgs)
 {
 	//获取编辑器的MenuStyle
 	MenuStyle = &SlAiStyle::Get().GetWidgetStyle<FSlAiMenuStyle>("BPSlAiMenuStyle");
-
-	//中英文切换
-	//FInternationalization::Get().SetCurrentCulture(TEXT("en"));
-	//FInternationalization::Get().SetCurrentCulture(TEXT("zh"));
-	FInternationalization::Get().SetCurrentCulture(TEXT("zh-Hans-CN"));
 
 	ChildSlot
 	[
@@ -88,16 +86,37 @@ void SSlAiMenuWidget::Construct(const FArguments& InArgs)
 	//添加按钮
 	ContentBox->AddSlot()
 	[
-		SNew(SlAiMenuItemWidget)
-		.ItemText(NSLOCTEXT("SlAiMenu","StartGame","StartGame"))
-		.ItemType(EMenuItem::StartGame)
-		.OnClicked(this,&SSlAiMenuWidget::MenuItemOnClicked)
+		SNew(SlAiGameOptionWidget)
+		.OnChangeCulture(this,&SSlAiMenuWidget::OnChangeCulture)
+		.OnChangeVolume(this,&SSlAiMenuWidget::OnChangeVolume)
+		// SNew(SlAiMenuItemWidget)
+		// .ItemText(NSLOCTEXT("SlAiMenu","StartGame","StartGame"))
+		// .ItemType(EMenuItem::StartGame)
+		// .OnClicked(this,&SSlAiMenuWidget::MenuItemOnClicked)
 	];
 }
 
 void SSlAiMenuWidget::MenuItemOnClicked(EMenuItem::Type ItemType)
 {
-	TitleText->SetText(NSLOCTEXT("SlAiMenu","StartGame","StartGame"));
+	SlAiHelper::Debug("StartGame");
+}
+
+void SSlAiMenuWidget::OnChangeCulture(ECultureTeam NewCulture)
+{
+	SlAiDataHandle::Get()->ChangeLocalizationCulture(NewCulture);
+}
+
+void SSlAiMenuWidget::OnChangeVolume(float MusicVolume, float SoundVolume)
+{
+	if (MusicVolume > 0)
+	{
+		SlAiDataHandle::Get()->SetMusicVolume(MusicVolume);
+	}
+
+	if (SoundVolume > 0)
+	{
+		SlAiDataHandle::Get()->SetSoundVolume(SoundVolume);
+	}
 }
 
 END_SLATE_FUNCTION_BUILD_OPTIMIZATION

@@ -26,6 +26,12 @@ private:
 	//绑定到各个按钮点击
 	void MenuItemOnClicked(EMenuItem::Type ItemType);
 
+	//音量变化
+	void OnChangeCulture(ECultureTeam NewCulture);
+	
+	//音量变化
+	void OnChangeVolume(float MusicVolume,float SoundVolume);
+
 private:
 		
 	//获取Menu样式
