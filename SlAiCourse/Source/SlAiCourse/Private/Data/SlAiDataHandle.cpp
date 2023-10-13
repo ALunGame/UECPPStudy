@@ -5,6 +5,8 @@
 
 #include "SiAiJsonSystem.h"
 #include "SlAiHelper.h"
+#include "SlAiJsonHandle.h"
+#include "SlAiSingleton.h"
 #include "Engine/GameEngine.h"
 #include "Helper/SlAiGetter.h"
 #include "Kismet/GameplayStatics.h"
@@ -38,9 +40,11 @@ void SlAiDataHandle::InitRecordData()
 	FString Culture;
 
 	//读取存档
-	UGameInstance* GameInstance = SlAiGetter::GetGameInstance();
-	USiAiJsonSystem* JsonSystem = GameInstance->GetSubsystem<USiAiJsonSystem>();
-	JsonSystem->RecordDataJsonRead(Culture,MusicVolume,SoundVolume,RecordDataList);
+	// UGameInstance* GameInstance = SlAiGetter::GetGameInstance();
+	// USiAiJsonSystem* JsonSystem = GameInstance->GetSubsystem<USiAiJsonSystem>();
+	// JsonSystem->RecordDataJsonRead(Culture,MusicVolume,SoundVolume,RecordDataList);
+
+	SlAiSingleton<SlAiJsonHandle>::Get()->RecordDataJsonRead(Culture, MusicVolume, SoundVolume, RecordDataList);
 
 	//初始化语言
 	ChangeLocalizationCulture(StringToEnum<ECultureTeam>(Culture));
