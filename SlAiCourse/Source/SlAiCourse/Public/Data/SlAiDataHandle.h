@@ -44,6 +44,9 @@ private:
 	T StringToEnum(FString Value);
 
 	void InitRecordData();
+
+	//保存存档数据
+	void SaveRecordData();
 	
 	static TSharedPtr<SlAiDataHandle> DataHandleInstance;
 };
