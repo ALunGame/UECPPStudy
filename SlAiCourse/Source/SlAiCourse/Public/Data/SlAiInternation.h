@@ -39,5 +39,7 @@ SlAiInternation::Register(LOCTEXT("Music","Music"));//音乐
 SlAiInternation::Register(LOCTEXT("Sound","Sound"));//音效
 
 SlAiInternation::Register(LOCTEXT("GoBack","GoBack"));//返回
+
+SlAiInternation::Register(LOCTEXT("NameRepeatedHint","RecordName Name Repeated"));//存档名重复
 	
 #undef LOCTEXT_NAMESPACE

@@ -19,4 +19,14 @@ public:
 
 	/** Constructs this widget with InArgs */
 	void Construct(const FArguments& InArgs);
+
+	//是否可以进入游戏
+	bool AllowEnterGame();
+	
+private:
+	//获取Menu样式
+	const struct FSlAiMenuStyle *MenuStyle;
+
+	//输入框
+	TSharedPtr<SEditableTextBox> EditableTextBox;
 };

@@ -36,6 +36,8 @@ TSharedRef<SlAiDataHandle> SlAiDataHandle::Create()
 
 void SlAiDataHandle::InitRecordData()
 {
+	RecordName = FString("");
+	
 	//获取语言
 	FString Culture;
 

@@ -3,10 +3,12 @@
 
 #include "SSlAiMenuWidget.h"
 
+#include "SlAiChooseRecordWidget.h"
 #include "SlAiDataHandle.h"
 #include "SlAiGameOptionWidget.h"
 #include "SlAiMenuItemWidget.h"
 #include "SlAiMenuWidgetStyle.h"
+#include "SlAiNewGameWidget.h"
 #include "SlAiStyle.h"
 #include "SlAiTypes.h"
 #include "SlateOptMacros.h"
@@ -86,9 +88,13 @@ void SSlAiMenuWidget::Construct(const FArguments& InArgs)
 	//添加按钮
 	ContentBox->AddSlot()
 	[
-		SNew(SlAiGameOptionWidget)
-		.OnChangeCulture(this,&SSlAiMenuWidget::OnChangeCulture)
-		.OnChangeVolume(this,&SSlAiMenuWidget::OnChangeVolume)
+
+		SNew(SlAiChooseRecordWidget)
+		//SNew(SlAiNewGameWidget)
+	
+		// SNew(SlAiGameOptionWidget)
+		// .OnChangeCulture(this,&SSlAiMenuWidget::OnChangeCulture)
+		// .OnChangeVolume(this,&SSlAiMenuWidget::OnChangeVolume)
 		// SNew(SlAiMenuItemWidget)
 		// .ItemText(NSLOCTEXT("SlAiMenu","StartGame","StartGame"))
 		// .ItemType(EMenuItem::StartGame)
