@@ -109,6 +109,22 @@ struct SLAICOURSE_API FSlAiMenuStyle : public FSlateWidgetStyle
 	//SliderStyle
 	UPROPERTY(EditAnywhere,Category = GameOption)
 		FSliderStyle SoundSliderStyle;
+
+	//开始游戏声音
+	UPROPERTY(EditAnywhere,Category = Sound)
+		FSlateSound StartGameSound;
+
+	//结束游戏声音
+	UPROPERTY(EditAnywhere,Category = Sound)
+		FSlateSound ExitGameSound;
+
+	//按钮声音
+	UPROPERTY(EditAnywhere,Category = Sound)
+		FSlateSound MenuItemChangeSound;
+
+	//菜单背景声音
+	UPROPERTY(EditAnywhere, Category = Sound)
+		FSlateSound MenuBackgroundMusic;
 };
 
 /**

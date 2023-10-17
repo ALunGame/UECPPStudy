@@ -18,10 +18,8 @@ public:
 	static void Init();
 
 	void ChangeLocalizationCulture(ECultureTeam newCulture);
-
-	void SetMusicVolume(float newValue);
 	
-	void SetSoundVolume(float newValue);
+	void ResetMenuVolume(float MusicVol, float SoundVol);
 
 public:
 	//当前语言
@@ -49,7 +47,16 @@ private:
 
 	//保存存档数据
 	void SaveRecordData();
+
 	
+	void InitMenuAudio();
+
+private:
 	static TSharedPtr<SlAiDataHandle> DataHandleInstance;
+
+	//保存Menu声音
+	TMap<FString,TArray<USoundCue*>> MenuAudioResource;
+	//获取Menu样式
+	const struct FSlAiMenuStyle *MenuStyle;
 };
 

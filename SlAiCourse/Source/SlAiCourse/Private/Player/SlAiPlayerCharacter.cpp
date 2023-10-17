@@ -1,7 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Character/SlAiPlayerCharacter.h"
+#include "Player/SlAiPlayerCharacter.h"
 
 
 // Sets default values

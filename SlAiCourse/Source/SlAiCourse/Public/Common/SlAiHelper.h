@@ -30,4 +30,22 @@ namespace SlAiHelper
 			GEngine->AddOnScreenDebugMessage(-1,Duration,FColor::Red,Message);
 		}
 	}
+
+	template<class UserClass>
+	FORCEINLINE FTimerHandle PlaySoundAndCall(UWorld* World, const FSlateSound Sound, UserClass* InUserObject, typename FTimerDelegate::TRawMethodDelegate<UserClass>::FMethodPtr InMethod)
+	{
+		FSlateApplication::Get().PlaySound(Sound);
+
+		//计时器
+		FTimerHandle Result;
+
+		//时间
+		const float SoundDuration = FMath::Max(FSlateApplication::Get().GetSoundDuration(Sound), 0.1f);
+
+		//回调
+		FTimerDelegate Callback;
+		Callback.BindRaw(InUserObject, InMethod);
+		World->GetTimerManager().SetTimer(Result, Callback, SoundDuration, false);
+		return Result;
+	}
 }

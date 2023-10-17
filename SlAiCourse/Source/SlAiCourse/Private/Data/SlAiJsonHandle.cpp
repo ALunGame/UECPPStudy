@@ -84,7 +84,7 @@ void SlAiJsonHandle::UpdateRecordData(FString Culture, float MusicVolume, float 
 	GetFStringInJsonArrayData(BaseDataArray,JsonStr);
 	// TSharedRef<TJsonWriter<TCHAR>> JsonWriter = TJsonWriterFactory<TCHAR>::Create(&JsonStr);
 	// FJsonSerializer::Serialize(BaseDataArray,JsonWriter);
-	SlAiHelper::Debug("JsonStr>>>"+JsonStr,60.f);
+	SlAiHelper::Debug(FString("JsonStr>>>")+JsonStr,60.f);
 	WriteFileWithJsonData(JsonStr,RelativePath,RecordDataFileName);
 }
 
