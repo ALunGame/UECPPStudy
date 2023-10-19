@@ -17,10 +17,11 @@ public class SlAiCourse : ModuleRules
 			"Slate",
 			"SlateCore",
 			"Json",
-			"JsonUtilities",
+			"JsonUtilities", 
+			"EnhancedInput",
 		});
 
-		PrivateDependencyModuleNames.AddRange(new string[] {  });
+		PrivateDependencyModuleNames.AddRange(new string[] { });
 
 		if (Target.Type == TargetRules.TargetType.Editor)
 		{

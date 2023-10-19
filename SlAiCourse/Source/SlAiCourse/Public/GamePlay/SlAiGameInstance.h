@@ -18,4 +18,6 @@ public:
 
 	UPROPERTY(VisibleAnywhere, Category = "SlAi")
 		FString GameName;
+
+	void LoadLevel(const FName LevelName);
 };

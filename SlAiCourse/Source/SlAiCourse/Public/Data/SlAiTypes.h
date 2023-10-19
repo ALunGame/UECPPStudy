@@ -66,3 +66,38 @@ namespace EMenuAnim
 		Open,
 	};
 }
+
+/**
+ * 视野类型
+ */
+namespace EViewType
+{
+	enum Type : uint8
+	{
+		/**
+		* 第一人称
+		*/
+		First,
+
+		/**
+		* 第三人称
+		*/
+		Third,
+	};
+}
+
+/**
+ * 上半身动画
+ */
+namespace EUpperBodyAnim
+{
+	enum Type : uint8
+	{
+		None,
+		Punch,
+		Hit,
+		Fight,
+		PickUp,
+		Eat
+	};
+}

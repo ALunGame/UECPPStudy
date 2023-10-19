@@ -2,3 +2,10 @@
 
 
 #include "SlAiGameInstance.h"
+
+#include "Kismet/GameplayStatics.h"
+
+void USlAiGameInstance::LoadLevel(const FName LevelName)
+{
+	UGameplayStatics::OpenLevel(GetWorld(), LevelName);
+}

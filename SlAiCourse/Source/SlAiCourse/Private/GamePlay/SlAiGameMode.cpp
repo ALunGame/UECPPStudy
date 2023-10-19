@@ -9,7 +9,7 @@
 #include "SlAiHelper.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/SlAiPlayerCharacter.h"
-#include "Player/SlAiPlayerContoller.h"
+#include "..\..\Public\Player\SlAiPlayerController.h"
 #include "Player/SlAiPlayerState.h"
 
 ASlAiGameMode::ASlAiGameMode()
@@ -19,7 +19,7 @@ ASlAiGameMode::ASlAiGameMode()
 	
 	//绑定自定义类
 	HUDClass = ASlAiGameHUD::StaticClass();
-	PlayerControllerClass = ASlAiPlayerContoller::StaticClass();
+	PlayerControllerClass = ASlAiPlayerController::StaticClass();
 	PlayerStateClass = ASlAiPlayerState::StaticClass();
 	DefaultPawnClass = ASlAiPlayerCharacter::StaticClass();
 }
