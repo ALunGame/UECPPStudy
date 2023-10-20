@@ -13,4 +13,9 @@ UCLASS()
 class SLAICOURSE_API ASlAiGameHUD : public AHUD
 {
 	GENERATED_BODY()
+
+public:
+	ASlAiGameHUD();
+
+	TSharedPtr<class SlAiGameHUDWidget> GameHUDWidget;
 };
