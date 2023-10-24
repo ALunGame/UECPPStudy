@@ -22,10 +22,7 @@ public:
 	void Construct(const FArguments& InArgs);
 
 public:
-
-	//获取Menu样式
-	const struct FSlAiGameStyle *GameStyle;
-
+	
 	//DPI缩放系数
 	TAttribute<float> UIScaler;
 	
@@ -33,6 +30,10 @@ public:
 	TSharedPtr<class  SlAiShortcutWidget> ShortcutWidget;
 
 private:
+
+	//获取Menu样式
+	const struct FSlAiGameStyle *GameStyle;
+	
 	//绑定UI缩放函数
 	float GetUIScaler() const;
 	//获得屏幕尺寸

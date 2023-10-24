@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "FileHelper.h"
+#include "SlAiTypes.h"
 
+struct ObjectAttr;
 /**
  * 
  */
@@ -18,6 +20,9 @@ public:
 
 	//更新存档
 	void UpdateRecordData(FString Culture,float MusicVolume, float SoundVolume,TArray<FString>* RecordDataList);
+
+	//解析物品属性
+	void ObjectAttrJsonRead(TMap<int, TSharedPtr<ObjectAttr>>& ObjectAttrMap);
 
 private:
 
@@ -33,10 +38,16 @@ private:
 	//保存字符串到文件
 	bool WriteFileWithJsonData(const FString& JsonStr, const FString& RelativePath, const FString& FileName);
 
+	//字符串转物品类型
+	EObjectType::Type StringToObjectType(const FString ArgStr);
+
 private:
 	//存档文件名
 	FString RecordDataFileName;
 
+	//物品文件名
+	FString ObjectAttrFileName;
+	
 	//文件相对路径
 	FString RelativePath;
 };

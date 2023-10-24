@@ -49,19 +49,6 @@ void SlAiDataHandle::InitRecordData()
 
 	//初始化语言
 	ChangeLocalizationCulture(StringToEnum<ECultureTeam>(Culture));
-
-	//输出
-	// SlAiHelper::Debug(Culture + FString(">>") + FString::SanitizeFloat(MusicVolume) + FString(">>") + FString::SanitizeFloat(SoundVolume),20.f);
-	// for (TArray<FString>::TIterator It(RecordDataList); It; ++It)
-	// {
-	// 	SlAiHelper::Debug(*It,20.f);
-	// }
-	
-	//测试
-	// SlAiSingleton<SlAiJsonHandle>::Get()->UpdateRecordData(Culture, MusicVolume, SoundVolume, new TArray<FString>
-	// {
-	// 	"1111",
-	// });
 }
 
 void SlAiDataHandle::SaveRecordData()
@@ -86,6 +73,11 @@ void SlAiDataHandle::InitMenuAudio()
 	MenuAudioResource.Add(FString("Sound"),SoundList);
 
 	ResetMenuVolume(MusicVolume, SoundVolume);
+}
+
+void SlAiDataHandle::InitObjectAttr()
+{
+	SlAiSingleton<SlAiJsonHandle>::Get()->ObjectAttrJsonRead(ObjectAttrMap);
 }
 
 void SlAiDataHandle::ChangeLocalizationCulture(ECultureTeam newCulture)
@@ -125,6 +117,11 @@ void SlAiDataHandle::ResetMenuVolume(float MusicVol, float SoundVol)
 	}
 
 	SaveRecordData();
+}
+
+void SlAiDataHandle::InitGameData()
+{
+	InitObjectAttr();
 }
 
 SlAiDataHandle::SlAiDataHandle()

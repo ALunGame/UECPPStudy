@@ -24,6 +24,90 @@ struct SLAICOURSE_API FSlAiGameStyle : public FSlateWidgetStyle
 	static const FName TypeName;
 	virtual const FName GetTypeName() const override { return TypeName; };
 	static const FSlAiGameStyle& GetDefault();
+
+	//普通
+	UPROPERTY(EditAnywhere, Category = Package)
+	FSlateBrush NormalContainerBrush;
+
+	//选中
+	UPROPERTY(EditAnywhere, Category = Package)
+	FSlateBrush ChooseContainerBrush;
+
+	//没有物品
+	UPROPERTY(EditAnywhere, Category = Package)
+	FSlateBrush EmptyBrush;
+	
+	/*
+	* 60号字体
+	*/
+	UPROPERTY(EditAnywhere, Category = Common)
+	FSlateFontInfo Font_60;
+
+	/*
+	* 50号字体带描边
+	*/
+	UPROPERTY(EditAnywhere, Category = Common)
+	FSlateFontInfo Font_Outline_50;
+
+	/*
+	* 40号字体
+	*/
+	UPROPERTY(EditAnywhere, Category = Common)
+	FSlateFontInfo Font_40;
+
+	/*
+	* 40号字体带描边
+	*/
+	UPROPERTY(EditAnywhere, Category = Common)
+	FSlateFontInfo Font_Outline_40;
+
+	/*
+	* 30号字体
+	*/
+	UPROPERTY(EditAnywhere, Category = Common)
+	FSlateFontInfo Font_30;
+
+	/*
+	* 30号字体带描边
+	*/
+	UPROPERTY(EditAnywhere, Category = Common)
+	FSlateFontInfo Font_Outline_30;
+
+	/*
+	* 20号字体
+	*/
+	UPROPERTY(EditAnywhere, Category = Common)
+	FSlateFontInfo Font_20;
+
+	/*
+	* 20号字体带描边
+	*/
+	UPROPERTY(EditAnywhere, Category = Common)
+	FSlateFontInfo Font_Outline_20;
+
+	/*
+	* 16号字体
+	*/
+	UPROPERTY(EditAnywhere, Category = Common)
+	FSlateFontInfo Font_16;
+	
+	/*
+	* 16号字体带描边
+	*/
+	UPROPERTY(EditAnywhere, Category = Common)
+	FSlateFontInfo Font_Outline_16;
+	
+	/*
+	* 白色字体
+	*/
+	UPROPERTY(EditAnywhere, Category = Common)
+	FLinearColor FontColor_White;
+
+	/*
+	* 黑色字体
+	*/
+	UPROPERTY(EditAnywhere, Category = Common)
+	FLinearColor FontColor_Black;
 };
 
 /**

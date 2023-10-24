@@ -21,6 +21,8 @@ public:
 	
 	void ResetMenuVolume(float MusicVol, float SoundVol);
 
+	void InitGameData();
+
 public:
 	//当前语言
 	ECultureTeam CurCulture;
@@ -32,6 +34,8 @@ public:
 	TArray<FString> RecordDataList;
 	//存档名
 	FString RecordName;
+	//物品属性
+	TMap<int,TSharedPtr<ObjectAttr>> ObjectAttrMap;
 
 private:
 	
@@ -44,13 +48,11 @@ private:
 	T StringToEnum(FString Value);
 
 	void InitRecordData();
-
 	//保存存档数据
 	void SaveRecordData();
-
-	
 	void InitMenuAudio();
 
+	void InitObjectAttr();
 private:
 	static TSharedPtr<SlAiDataHandle> DataHandleInstance;
 

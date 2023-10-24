@@ -3,6 +3,8 @@
 
 #include "SlAiGameHUDWidget.h"
 
+#include "SDPIScaler.h"
+#include "SlAiShortcutWidget.h"
 #include "SlAiStyle.h"
 #include "SlateOptMacros.h"
 
@@ -16,10 +18,20 @@ void SlAiGameHUDWidget::Construct(const FArguments& InArgs)
 	//绑定UI缩放规则
 	UIScaler.Bind(this,&SlAiGameHUDWidget::GetUIScaler);
 	
-	// ChildSlot
-	// [
-	// 	
-	// ]; 
+	ChildSlot
+	[
+		SNew(SDPIScaler).DPIScale(UIScaler)
+		[
+			SNew(SOverlay)
+
+			+SOverlay::Slot()
+			.HAlign(HAlign_Center)
+			.VAlign(VAlign_Bottom)
+			[
+				SAssignNew(ShortcutWidget,SlAiShortcutWidget)
+			]
+		]
+	]; 
 }
 
 float SlAiGameHUDWidget::GetUIScaler() const

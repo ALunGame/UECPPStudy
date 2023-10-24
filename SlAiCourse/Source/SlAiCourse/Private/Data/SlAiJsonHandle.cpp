@@ -7,6 +7,7 @@
 #include "JsonReader.h"
 #include "JsonSerializer.h"
 #include "SlAiHelper.h"
+#include "SlAiTypes.h"
 
 
 SlAiJsonHandle::SlAiJsonHandle()
@@ -85,6 +86,37 @@ void SlAiJsonHandle::UpdateRecordData(FString Culture, float MusicVolume, float 
 	WriteFileWithJsonData(JsonStr,RelativePath,RecordDataFileName);
 }
 
+void SlAiJsonHandle::ObjectAttrJsonRead(TMap<int, TSharedPtr<ObjectAttr>>& ObjectAttrMap)
+{
+	FString JsonValue;
+	LoadStringFromFile(ObjectAttrFileName, RelativePath, JsonValue);
+
+	TArray<TSharedPtr<FJsonValue>> JsonParsed;
+	TSharedRef<TJsonReader<TCHAR>> JsonReader = TJsonReaderFactory<TCHAR>::Create(JsonValue);
+
+	if (FJsonSerializer::Deserialize(JsonReader, JsonParsed)) {
+		for (int i = 0; i < JsonParsed.Num(); ++i) {
+			TArray<TSharedPtr<FJsonValue>> ObjectValue = JsonParsed[i]->AsObject()->GetArrayField(FString::FromInt(i));
+			FText EN = FText::FromString(ObjectValue[0]->AsObject()->GetStringField("EN"));
+			FText ZH = FText::FromString(ObjectValue[1]->AsObject()->GetStringField("ZH"));
+			FString ObjectTypeStr = ObjectValue[2]->AsObject()->GetStringField("ObjectType");
+			int PlantAttack = ObjectValue[3]->AsObject()->GetIntegerField("PlantAttack");
+			int MetalAttcck = ObjectValue[4]->AsObject()->GetIntegerField("MetalAttcck");
+			int AnimalAttack = ObjectValue[5]->AsObject()->GetIntegerField("AnimalAttack");
+			int AffectRange = ObjectValue[6]->AsObject()->GetIntegerField("AffectRange");
+			FString TexPath = ObjectValue[7]->AsObject()->GetStringField("TexPath");
+
+			EObjectType::Type ObjectType = StringToObjectType(ObjectTypeStr);
+			TSharedPtr<ObjectAttr> ObjectAttrPtr = MakeShareable(new ObjectAttr(EN, ZH, ObjectType, PlantAttack, MetalAttcck, AnimalAttack, AffectRange, TexPath));
+
+			ObjectAttrMap.Add(i, ObjectAttrPtr);
+		}
+	}
+	else {
+		SlAiHelper::Debug(FString("Deserialize Failed"));
+	}
+}
+
 bool SlAiJsonHandle::LoadStringFromFile(const FString& FileName, const FString& RelaPath, FString& ResultString)
 {
 	if (!FileName.IsEmpty()) {
@@ -148,5 +180,14 @@ bool SlAiJsonHandle::WriteFileWithJsonData(const FString& JsonStr, const FString
 	}
 	SlAiHelper::DebugError("存档保存失败！！"+AbsoPath,10.f);
 	return false;
+}
+
+EObjectType::Type SlAiJsonHandle::StringToObjectType(const FString ArgStr)
+{
+	if (ArgStr.Equals(FString("Normal"))) return EObjectType::Normal;
+	if (ArgStr.Equals(FString("Food"))) return EObjectType::Food;
+	if (ArgStr.Equals(FString("Tool"))) return EObjectType::Tool;
+	if (ArgStr.Equals(FString("Weapon"))) return EObjectType::Weapon;
+	return EObjectType::Normal;
 }
 

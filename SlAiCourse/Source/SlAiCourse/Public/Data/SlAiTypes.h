@@ -101,3 +101,58 @@ namespace EUpperBodyAnim
 		Eat
 	};
 }
+
+
+/*
+* 物品属性
+*/
+namespace EObjectType
+{
+	enum Type : uint8
+	{
+		Normal = 0,		//普通物品
+		Food,		//十五
+		Tool,		//工具
+		Weapon,		//武器
+	};
+};
+
+/*
+* 物品属性
+*/
+struct ObjectAttr
+{
+	FText EN;	//英文名
+	FText ZH;	//中文名
+
+	EObjectType::Type ObjectType;
+
+	int PlantAttack;	//对植物的攻击力
+	int MetalAttcck;	//对金属的攻击力
+	int AnimalAttack;	//对动物的攻击力
+	
+	int AffectRange;	//攻击力距离
+
+	FString TexPath;	//图片路径
+
+	ObjectAttr(const FText ENName, const FText ZHName, const EObjectType::Type OT, const int PA, const int MA, const int AA, const int AR, const FString TP) {
+		EN = ENName;
+		ZH = ZHName;
+		ObjectType = OT;
+		PlantAttack = PA;
+		MetalAttcck = MA;
+		AnimalAttack = AA;
+		AffectRange = AR;
+		TexPath = TP;
+	}
+
+	FString ToString()
+	{
+		return EN.ToString() + FString("--") + ZH.ToString() + FString("--") + FString::FromInt((int)ObjectType)
+		+ FString("--") + FString::FromInt((int)PlantAttack)
+		+ FString("--") + FString::FromInt((int)MetalAttcck)
+		+ FString("--") + FString::FromInt((int)AnimalAttack)
+		+ FString("--") + FString::FromInt((int)AffectRange)
+		+ FString("--") + TexPath;
+	}
+};
