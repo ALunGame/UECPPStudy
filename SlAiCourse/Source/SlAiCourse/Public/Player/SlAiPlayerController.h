@@ -9,6 +9,8 @@
 #include "GameFramework/PlayerController.h"
 #include "SlAiPlayerController.generated.h"
 
+class ASlAiPlayerState;
+
 /**
  * 
  */
@@ -30,6 +32,11 @@ public:
 	ASlAiPlayerCharacter* PlayerCharacter;
 
 	/*
+	 * 状态
+	 */
+	ASlAiPlayerState* PlayerState;
+
+	/*
 	 * 左键动作
 	 */
 	EUpperBodyAnim::Type LeftMouseClickAnim;
@@ -38,6 +45,16 @@ public:
 	 * 右键动作
 	 */
 	EUpperBodyAnim::Type RightMouseClickAnim;
+
+	/*
+	 * 鼠标左键
+	 */
+	bool IsMouseLeftDown;
+
+	/*
+	 * 鼠标右键
+	 */
+	bool IsMouseRightDown;
 
 #pragma region 移动输入映射
 	
@@ -80,6 +97,12 @@ public:
 
 	UPROPERTY(VisibleDefaultsOnly, Category="Input_Interactive|Action")
 	UInputAction* IA_RightMouseClick;
+
+	UPROPERTY(VisibleDefaultsOnly, Category="Input_Interactive|Action")
+	UInputAction* IA_MouseScrollUp;
+
+	UPROPERTY(VisibleDefaultsOnly, Category="Input_Interactive|Action")
+	UInputAction* IA_MouseScrollDown;
 	
 #pragma endregion
 
@@ -158,6 +181,12 @@ private:
 
 	//开始鼠标右键
 	void OnRightMouseClickEnd(const FInputActionValue& Value);
+
+	//开始鼠标向上滚动
+	void OnMouseScrollUp(const FInputActionValue& Value);
+
+	//开始鼠标向下滚动
+	void OnMouseScrollDown(const FInputActionValue& Value);
 	
 #pragma endregion
 	

@@ -36,6 +36,8 @@ public:
 	FString RecordName;
 	//物品属性
 	TMap<int,TSharedPtr<ObjectAttr>> ObjectAttrMap;
+	//物品贴图
+	TArray<const FSlateBrush*> ObjectBrushList;
 
 private:
 	
@@ -60,5 +62,7 @@ private:
 	TMap<FString,TArray<USoundCue*>> MenuAudioResource;
 	//获取Menu样式
 	const struct FSlAiMenuStyle *MenuStyle;
+	//获取Menu样式
+	const struct FSlAiGameStyle *GameStyle;
 };
 

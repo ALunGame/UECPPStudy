@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SlAiGameMode.h"
 #include "GameFramework/HUD.h"
 #include "SlAiGameHUD.generated.h"
 
@@ -15,7 +16,15 @@ class SLAICOURSE_API ASlAiGameHUD : public AHUD
 	GENERATED_BODY()
 
 public:
+
+	ASlAiGameMode* GameMode;
+	
+public:
 	ASlAiGameHUD();
 
 	TSharedPtr<class SlAiGameHUDWidget> GameHUDWidget;
+
+protected:
+
+	virtual void BeginPlay() override;
 };

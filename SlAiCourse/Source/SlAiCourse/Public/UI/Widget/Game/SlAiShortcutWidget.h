@@ -4,6 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "SCompoundWidget.h"
+#include "SlAiTypes.h"
+
+//注册容器到PlayerState类的委托
+DECLARE_DELEGATE_TwoParams(FRegisterShortcutContainer, TArray<TSharedPtr<ShortcutContainer>>*, TSharedPtr<STextBlock>)
 
 /**
  * 
@@ -22,12 +26,18 @@ public:
 
 	virtual void Tick(const FGeometry& AllottedGeometry, const double InCurrentTime, const float InDeltaTime) override;
 
-private:
+public:
+	FRegisterShortcutContainer RegisterShortcutContainer;
+	
+
+//private:
 
 	//初始化容器
 	void InitContainer();
+
+	TArray<TSharedPtr<ShortcutContainer>> ShortcutContainers;
 	
-private:
+//private:
 
 	//获取样式
 	const struct FSlAiGameStyle *GameStyle;
@@ -39,4 +49,6 @@ private:
 	TSharedPtr<class SUniformGridPanel> GridPanel;
 
 	bool IsInitContainer;
+
+	int WaitFrame;
 };

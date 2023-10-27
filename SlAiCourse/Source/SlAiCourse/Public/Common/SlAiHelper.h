@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Editor/UnrealEdEngine.h"
 
 namespace SlAiHelper
 {

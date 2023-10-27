@@ -7,6 +7,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "SlAiHelper.h"
+#include "SlAiPlayerState.h"
 #include "Engine/LocalPlayer.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -27,6 +28,9 @@ ASlAiPlayerController::ASlAiPlayerController()
 	//初始化
 	LeftMouseClickAnim = EUpperBodyAnim::Eat;
 	RightMouseClickAnim = EUpperBodyAnim::Hit;
+
+	IsMouseLeftDown = false;
+	IsMouseRightDown = false;
 }
 
 void ASlAiPlayerController::SetupInputComponent()
@@ -59,6 +63,11 @@ void ASlAiPlayerController::BeginPlay()
 	FInputModeGameOnly InputMode;
 	InputMode.SetConsumeCaptureMouseDown(true);
 	SetInputMode(InputMode);
+
+	if (!PlayerState)
+	{
+		PlayerState = Cast<ASlAiPlayerState>(PlayerState);
+	}
 }
 
 void ASlAiPlayerController::InitPlayerCharacter()
@@ -241,6 +250,12 @@ void ASlAiPlayerController::LoadInputInteractiveMapping()
 
 	static ConstructorHelpers::FObjectFinder<UInputAction> Input_RightMouse(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_RightMouseClick.IA_RightMouseClick'"));
 	IA_RightMouseClick = Input_RightMouse.Object;
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> Input_MouseScrollUp(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_MouseScrollUp.IA_MouseScrollUp'"));
+	IA_MouseScrollUp = Input_MouseScrollUp.Object;
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> Input_MouseScrollDown(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_MouseScrollDown.IA_MouseScrollDown'"));
+	IA_MouseScrollDown = Input_MouseScrollDown.Object;
 }
 
 void ASlAiPlayerController::RegisterInputInteractive()
@@ -266,6 +281,20 @@ void ASlAiPlayerController::RegisterInputInteractive()
 			EnhancedInputComponent->BindAction(IA_RightMouseClick, ETriggerEvent::Completed, this, &ASlAiPlayerController::OnRightMouseClickEnd);
 			SlAiHelper::Debug(FString("IA_RightMouseClick>>>"),60.f);
 		}
+
+		// if(IA_MouseScrollUp)
+		// {
+		// 	EnhancedInputComponent->BindAction(IA_MouseScrollUp, ETriggerEvent::Started, this, &ASlAiPlayerController::OnMouseScrollUp);
+		// 	//EnhancedInputComponent->BindAction(IA_MouseScrollUp, ETriggerEvent::Completed, this, &ASlAiPlayerController::OnRightMouseClickEnd);
+		// 	SlAiHelper::Debug(FString("IA_MouseScrollUp>>>"),60.f);
+		// }
+		//
+		// if(IA_MouseScrollDown)
+		// {
+		// 	EnhancedInputComponent->BindAction(IA_MouseScrollDown, ETriggerEvent::Started, this, &ASlAiPlayerController::OnMouseScrollDown);
+		// 	//EnhancedInputComponent->BindAction(IA_MouseScrollDown, ETriggerEvent::Completed, this, &ASlAiPlayerController::OnRightMouseClickEnd);
+		// 	SlAiHelper::Debug(FString("IA_MouseScrollDown>>>"),60.f);
+		// }
 	}
 }
 
@@ -294,23 +323,53 @@ void ASlAiPlayerController::OnChangeView(const FInputActionValue& Value)
 void ASlAiPlayerController::OnLeftMouseClickStart(const FInputActionValue& Value)
 {
 	PlayerCharacter->UpperBodyAnim = LeftMouseClickAnim;
-	SlAiHelper::DebugWarning("OnLeftMouseClickStart");
+	IsMouseLeftDown = true;
 }
 
 void ASlAiPlayerController::OnLeftMouseClickEnd(const FInputActionValue& Value)
 {
 	PlayerCharacter->UpperBodyAnim = EUpperBodyAnim::None;
-	SlAiHelper::DebugWarning("OnLeftMouseClick____End");
+	IsMouseLeftDown = false;
 }
 
 void ASlAiPlayerController::OnRightMouseClickStart(const FInputActionValue& Value)
 {
 	PlayerCharacter->UpperBodyAnim = RightMouseClickAnim;
+	IsMouseRightDown = true;
 }
 
 void ASlAiPlayerController::OnRightMouseClickEnd(const FInputActionValue& Value)
 {
 	PlayerCharacter->UpperBodyAnim = EUpperBodyAnim::None;
+	IsMouseRightDown = false;
+}
+
+void ASlAiPlayerController::OnMouseScrollUp(const FInputActionValue& Value)
+{
+	if (!PlayerCharacter->IsAllowSwitchView)
+	{
+		return;
+	}
+
+	if (IsMouseLeftDown || IsMouseRightDown)
+	{
+		return;
+	}
+	//PlayerState->ChooseShortcut(true);
+}
+
+void ASlAiPlayerController::OnMouseScrollDown(const FInputActionValue& Value)
+{
+	if (!PlayerCharacter->IsAllowSwitchView)
+	{
+		return;
+	}
+
+	if (IsMouseLeftDown || IsMouseRightDown)
+    {
+    	return;
+    }
+	//PlayerState->ChooseShortcut(false);
 }
 
 

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SlAiHelper.h"
 
 /**
  * 
@@ -154,5 +155,85 @@ struct ObjectAttr
 		+ FString("--") + FString::FromInt((int)AnimalAttack)
 		+ FString("--") + FString::FromInt((int)AffectRange)
 		+ FString("--") + TexPath;
+	}
+};
+
+/*
+* 快捷栏结构体
+*/
+struct ShortcutContainer
+{
+	/*
+	* 物品Id
+	*/
+	int ObjectIndex;
+	int ObjectNum;
+	TSharedPtr<SBorder> ContainerBorder;
+	TSharedPtr<SBorder> ObjectImage;
+	TSharedPtr<STextBlock> ObjectNumText;
+	const FSlateBrush* NormalContainerBrush;
+	const FSlateBrush* ChooseContainerBrush;
+	TArray<const FSlateBrush*>* ObjectBrushList;
+
+	ShortcutContainer(TSharedPtr<SBorder> CB, TSharedPtr<SBorder> OI, TSharedPtr<STextBlock> ONT, const FSlateBrush* NCB, const FSlateBrush* CCB, TArray<const FSlateBrush*>* OBL)
+	{
+		ContainerBorder = CB;
+		ObjectImage = OI;
+		ObjectNumText = ONT;
+		NormalContainerBrush = NCB;
+		ChooseContainerBrush = CCB;
+		ObjectBrushList = OBL;
+
+		//初始化
+		ObjectIndex = 0;
+		ObjectNum = 0;
+		ContainerBorder->SetBorderImage(NormalContainerBrush);
+		ObjectImage->SetBorderImage((*ObjectBrushList)[0]);
+	}
+
+	/*
+	* 设置选中，返回物品Id
+	*/
+	int SetChoose(bool Option)
+	{
+		if (Option)
+		{
+			ContainerBorder->SetBorderImage(ChooseContainerBrush);
+		}
+		else
+		{
+			ContainerBorder->SetBorderImage(NormalContainerBrush);
+		}
+		return ObjectIndex;
+	}
+
+	/*
+	* NewIndex
+	*/
+	ShortcutContainer* SetObject(int NewIndex)
+	{
+		ObjectIndex = NewIndex;
+		ObjectImage->SetBorderImage((*ObjectBrushList)[NewIndex]);
+
+		SlAiHelper::Debug("SetObject.NewIndex: "+NewIndex,60.f);
+		SlAiHelper::Debug("SetObject.Image: " + ((*ObjectBrushList)[NewIndex]->GetResourceName().ToString()),60.f);
+		return this;
+	}
+
+	/*
+	* 数量
+	*/
+	ShortcutContainer* SetObjectNum(const int Num = 0)
+	{
+		ObjectNum = Num;
+		if (ObjectNum <= 0)
+		{
+			ObjectNumText->SetText(FText::FromString(FString("")));
+		}
+		else
+		{
+			ObjectNumText->SetText(FText::FromString(FString::FromInt(ObjectNum)));
+		}
+		return this;
 	}
 };

@@ -19,8 +19,13 @@ ASlAiGameMode::ASlAiGameMode()
 	
 	//绑定自定义类
 	HUDClass = ASlAiGameHUD::StaticClass();
+	
 	PlayerControllerClass = ASlAiPlayerController::StaticClass();
 	PlayerStateClass = ASlAiPlayerState::StaticClass();
+
+	// PlayerControllerClass = ASlAiPlayerController::StaticClass();
+	// PlayerStateClass = ASlAiPlayerState::StaticClass();
+	
 	DefaultPawnClass = ASlAiPlayerCharacter::StaticClass();
 }
 
@@ -29,10 +34,22 @@ void ASlAiGameMode::Tick(float DeltaSeconds)
 	
 }
 
+void ASlAiGameMode::InitGameplayMode()
+{
+	SPController = Cast<ASlAiPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(),0));
+	SPCharacter = Cast<ASlAiPlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(),0));
+	SPState = Cast<ASlAiPlayerState>(SPController->PlayerState);
+}
+
 void ASlAiGameMode::BeginPlay()
 {
-	//SlAiHelper::DebugWarning(FString("DataHandle:" + SlAiDataHandle::Get()->RecordName),30.f);
-	//SlAiHelper::DebugWarning(FString("GameInstance:" + Cast<USlAiGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->GameName),30.f);
+	SlAiHelper::DebugWarning(FString("DataHandle:" + SlAiDataHandle::Get()->RecordName),30.f);
+	SlAiHelper::DebugWarning(FString("GameInstance:" + Cast<USlAiGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->GameName),30.f);
 
 	SlAiDataHandle::Get()->InitGameData();
+
+	if (!SPController)
+	{
+		InitGameplayMode();
+	}
 }

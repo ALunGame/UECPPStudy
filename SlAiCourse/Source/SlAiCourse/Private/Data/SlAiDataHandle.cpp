@@ -4,6 +4,7 @@
 #include "Data/SlAiDataHandle.h"
 
 #include "SiAiJsonSystem.h"
+#include "SlAiGameWidgetStyle.h"
 #include "SlAiHelper.h"
 #include "SlAiJsonHandle.h"
 #include "SlAiMenuWidgetStyle.h"
@@ -78,6 +79,32 @@ void SlAiDataHandle::InitMenuAudio()
 void SlAiDataHandle::InitObjectAttr()
 {
 	SlAiSingleton<SlAiJsonHandle>::Get()->ObjectAttrJsonRead(ObjectAttrMap);
+
+	for (TMap<int,TSharedPtr<ObjectAttr>>::TIterator It(ObjectAttrMap); It; ++It)
+	{
+		SlAiHelper::Debug(It.Value()->ToString()),60.f;
+	}
+
+	GameStyle = &SlAiStyle::Get().GetWidgetStyle<FSlAiGameStyle>("BPSlAiGameStyle");
+	ObjectBrushList.Add(&GameStyle->EmptyBrush);
+	ObjectBrushList.Add(&GameStyle->ObjectBrush_1);
+	ObjectBrushList.Add(&GameStyle->ObjectBrush_2);
+	ObjectBrushList.Add(&GameStyle->ObjectBrush_3);
+	ObjectBrushList.Add(&GameStyle->ObjectBrush_4);
+	ObjectBrushList.Add(&GameStyle->ObjectBrush_5);
+	ObjectBrushList.Add(&GameStyle->ObjectBrush_6);
+	ObjectBrushList.Add(&GameStyle->ObjectBrush_7);
+
+	////动态创建的笔刷会已发崩溃
+	//for (int i = 1; i < ObjectAttrMap.Num(); ++i) {
+	//	//动态创建FSlateBrush,要创建指针
+	//	FSlateBrush* ObjectBrush = new FSlateBrush();
+	//	ObjectBrush->ImageSize = FVector2D(80.f, 80.f);
+	//	ObjectBrush->DrawAs = ESlateBrushDrawType::Image;
+	//	UTexture2D* ObjectTex = LoadObject<UTexture2D>(NULL, *(*ObjectAttrMap.Find(i))->TexPath);
+	//	ObjectBrush->SetResourceObject(ObjectTex);
+	//	ObjectBrushList.Add(ObjectBrush);
+	//}
 }
 
 void SlAiDataHandle::ChangeLocalizationCulture(ECultureTeam newCulture)

@@ -3,10 +3,15 @@
 
 #include "Game/SlAiShortcutWidget.h"
 
+#include "SlAiDataHandle.h"
+#include "SlAiGameMode.h"
 #include "SlAiGameWidgetStyle.h"
+#include "SlAiPlayerState.h"
 #include "SlAiStyle.h"
+#include "SlAiTypes.h"
 #include "SlateOptMacros.h"
 #include "SUniformGridPanel.h"
+#include "Kismet/GameplayStatics.h"
 
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 
@@ -43,19 +48,27 @@ void SlAiShortcutWidget::Construct(const FArguments& InArgs)
 	];
 
 	IsInitContainer = false;
+	WaitFrame = 0;
 }
 
 void SlAiShortcutWidget::Tick(const FGeometry& AllottedGeometry, const double InCurrentTime, const float InDeltaTime)
 {
-	if (!IsInitContainer)
+	WaitFrame++;
+	if (WaitFrame >= 1000)
 	{
-		InitContainer();
-		IsInitContainer = true;
+		if (!IsInitContainer)
+		{
+			InitContainer();
+			IsInitContainer = true;
+		}
 	}
 }
 
 void SlAiShortcutWidget::InitContainer()
 {
+	// ShortcutContainers
+	// TArray<TSharedPtr<ShortcutContainer>> ContainerList;
+	
 	for (int i = 0; i < 9; ++i)
 	{
 		TSharedPtr<SBorder> ContainerBorder;
@@ -83,7 +96,26 @@ void SlAiShortcutWidget::InitContainer()
 		[
 			ContainerBorder->AsShared()
 		];
+
+		TSharedPtr<ShortcutContainer> Container = MakeShareable(new  ShortcutContainer(ContainerBorder,ObjectImg,ObjectNumText,&GameStyle->NormalContainerBrush,
+			&GameStyle->ChooseContainerBrush,&SlAiDataHandle::Get()->ObjectBrushList));
+
+		//默认选中
+		if (i == 0)
+		{
+			Container->SetChoose(true);
+		}
+		ShortcutContainers.Add(Container);
 	}
+
+	//执行委托
+	SlAiHelper::DebugError("SlAiShortcutWidget::InitContainer()>>>>>",60.f);
+	RegisterShortcutContainer.ExecuteIfBound(&ShortcutContainers,ShortcutInfoTextBlock);
+
+	//ASlAiGameMode* GameMode = Cast<ASlAiGameMode>(UGameplayStatics::Get);
+	//GameMode->SPState->OnRegisterShortcutContainer(&ContainerList,ShortcutInfoTextBlock);
+
+	//return ContainerList;
 }
 
 END_SLATE_FUNCTION_BUILD_OPTIMIZATION
