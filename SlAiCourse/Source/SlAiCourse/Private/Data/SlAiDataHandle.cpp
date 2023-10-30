@@ -80,10 +80,10 @@ void SlAiDataHandle::InitObjectAttr()
 {
 	SlAiSingleton<SlAiJsonHandle>::Get()->ObjectAttrJsonRead(ObjectAttrMap);
 
-	for (TMap<int,TSharedPtr<ObjectAttr>>::TIterator It(ObjectAttrMap); It; ++It)
-	{
-		SlAiHelper::Debug(It.Value()->ToString()),60.f;
-	}
+	// for (TMap<int,TSharedPtr<ObjectAttr>>::TIterator It(ObjectAttrMap); It; ++It)
+	// {
+	// 	SlAiHelper::Debug(It.Value()->ToString()),60.f;
+	// }
 
 	GameStyle = &SlAiStyle::Get().GetWidgetStyle<FSlAiGameStyle>("BPSlAiGameStyle");
 	ObjectBrushList.Add(&GameStyle->EmptyBrush);
@@ -105,6 +105,11 @@ void SlAiDataHandle::InitObjectAttr()
 	//	ObjectBrush->SetResourceObject(ObjectTex);
 	//	ObjectBrushList.Add(ObjectBrush);
 	//}
+}
+
+void SlAiDataHandle::InitResourceAttr()
+{
+	SlAiSingleton<SlAiJsonHandle>::Get()->ResourceAttrJsonRead(ResourceAttrMap);
 }
 
 void SlAiDataHandle::ChangeLocalizationCulture(ECultureTeam newCulture)
@@ -149,6 +154,7 @@ void SlAiDataHandle::ResetMenuVolume(float MusicVol, float SoundVol)
 void SlAiDataHandle::InitGameData()
 {
 	InitObjectAttr();
+	InitResourceAttr();
 }
 
 SlAiDataHandle::SlAiDataHandle()

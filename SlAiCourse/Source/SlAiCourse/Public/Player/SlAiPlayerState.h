@@ -33,15 +33,23 @@ public:
 
 	//获得当前选中的容器中物品Id
 	TSharedPtr<ObjectAttr> GetCurrHandleObjectAttr() const;
+
+	//提供射线信息
+	void RegisterRayInfoEvent(TSharedPtr<STextBlock> RayInfoTextBlock);
 	
 private:
 
+	//快捷栏序列
 	TArray<TSharedPtr<ShortcutContainer>> ShortcutContainers;
-
 	//快捷栏信息参数
 	TAttribute<FText> ShortcutInfoTextAttr;
+
+	//射线信息
+	TAttribute<FText> RayInfoTextAttr;
 
 private:
 
 	FText GetShortcutInfoText() const;
+
+	FText GetRayInfoText() const;
 };

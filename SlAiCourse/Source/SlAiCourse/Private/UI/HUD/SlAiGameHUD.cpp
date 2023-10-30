@@ -7,6 +7,7 @@
 #include "SlAiPlayerState.h"
 #include "SlAiShortcutWidget.h"
 #include "SWeakWidget.h"
+#include "Interactive/SlAiRayInfoWidget.h"
 #include "Kismet/GameplayStatics.h"
 
 ASlAiGameHUD::ASlAiGameHUD()
@@ -28,12 +29,11 @@ void ASlAiGameHUD::BeginPlay()
 	{
 		return;
 	}
-
-	SlAiHelper::Debug("ASlAiGameHUD::BeginPlay()001",60.f);
+	
 	//确保组件都已经实现
 	GameMode->InitGameplayMode();
 	//注册快捷栏委托
 	GameHUDWidget->ShortcutWidget->RegisterShortcutContainer.BindUObject(GameMode->SPState,&ASlAiPlayerState::OnRegisterShortcutContainer);
-	//GameHUDWidget->ShortcutWidget->InitContainer();
-	//GameMode->SPState->OnRegisterShortcutContainer(&GameHUDWidget->ShortcutWidget->ShortcutContainers,GameHUDWidget->ShortcutWidget->ShortcutInfoTextBlock);
+	//注册涉嫌信息委托
+	GameHUDWidget->RayInfoWidget->RegisterRayInfoEvent.BindUObject(GameMode->SPState,&ASlAiPlayerState::RegisterRayInfoEvent);
 }

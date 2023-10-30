@@ -30,14 +30,12 @@ public:
 	FRegisterShortcutContainer RegisterShortcutContainer;
 	
 
-//private:
+private:
 
 	//初始化容器
 	void InitContainer();
-
-	TArray<TSharedPtr<ShortcutContainer>> ShortcutContainers;
 	
-//private:
+private:
 
 	//获取样式
 	const struct FSlAiGameStyle *GameStyle;

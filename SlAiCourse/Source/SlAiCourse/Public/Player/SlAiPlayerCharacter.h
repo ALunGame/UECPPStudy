@@ -55,6 +55,16 @@ public:
 	 */
 	void ChangeView(EViewType::Type ViewType);
 
+	/*
+	 * 修改当前手持物品
+	 */
+	void ChangeHandObject(TSubclassOf<AActor> HandObjectClass);
+
+	/*
+	* 修改物品碰撞检测
+	*/
+	void ChangeHandObjectDetect(bool IsOpen);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -62,5 +72,8 @@ protected:
 private:
 
 	UPROPERTY(VisibleDefaultsOnly, Category = "SlAi")
-		USkeletalMeshComponent* MeshFirst; 
+		USkeletalMeshComponent* MeshFirst;
+
+	UPROPERTY(VisibleDefaultsOnly, Category = "SlAi")
+		UChildActorComponent* HandObject; 
 };

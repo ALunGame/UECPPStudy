@@ -53,21 +53,16 @@ void SlAiShortcutWidget::Construct(const FArguments& InArgs)
 
 void SlAiShortcutWidget::Tick(const FGeometry& AllottedGeometry, const double InCurrentTime, const float InDeltaTime)
 {
-	WaitFrame++;
-	if (WaitFrame >= 1000)
+	if (!IsInitContainer)
 	{
-		if (!IsInitContainer)
-		{
-			InitContainer();
-			IsInitContainer = true;
-		}
+		InitContainer();
+		IsInitContainer = true;
 	}
 }
 
 void SlAiShortcutWidget::InitContainer()
 {
-	// ShortcutContainers
-	// TArray<TSharedPtr<ShortcutContainer>> ContainerList;
+	TArray<TSharedPtr<ShortcutContainer>> ContainerList;
 	
 	for (int i = 0; i < 9; ++i)
 	{
@@ -105,17 +100,13 @@ void SlAiShortcutWidget::InitContainer()
 		{
 			Container->SetChoose(true);
 		}
-		ShortcutContainers.Add(Container);
+		
+		ContainerList.Add(Container);
 	}
 
 	//执行委托
 	SlAiHelper::DebugError("SlAiShortcutWidget::InitContainer()>>>>>",60.f);
-	RegisterShortcutContainer.ExecuteIfBound(&ShortcutContainers,ShortcutInfoTextBlock);
-
-	//ASlAiGameMode* GameMode = Cast<ASlAiGameMode>(UGameplayStatics::Get);
-	//GameMode->SPState->OnRegisterShortcutContainer(&ContainerList,ShortcutInfoTextBlock);
-
-	//return ContainerList;
+	RegisterShortcutContainer.ExecuteIfBound(&ContainerList,ShortcutInfoTextBlock);
 }
 
 END_SLATE_FUNCTION_BUILD_OPTIMIZATION

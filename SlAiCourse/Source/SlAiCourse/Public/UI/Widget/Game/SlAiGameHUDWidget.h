@@ -29,6 +29,9 @@ public:
 	//切换快捷栏
 	TSharedPtr<class  SlAiShortcutWidget> ShortcutWidget;
 
+	//射线检测
+	TSharedPtr<class  SlAiRayInfoWidget> RayInfoWidget;
+
 private:
 
 	//获取Menu样式

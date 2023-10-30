@@ -39,6 +39,9 @@ public:
 	//物品贴图
 	TArray<const FSlateBrush*> ObjectBrushList;
 
+	//资源属性
+	TMap<int,TSharedPtr<ResourceAttribute>> ResourceAttrMap;
+
 private:
 	
 	static TSharedRef<SlAiDataHandle> Create();
@@ -55,6 +58,8 @@ private:
 	void InitMenuAudio();
 
 	void InitObjectAttr();
+
+	void InitResourceAttr();
 private:
 	static TSharedPtr<SlAiDataHandle> DataHandleInstance;
 

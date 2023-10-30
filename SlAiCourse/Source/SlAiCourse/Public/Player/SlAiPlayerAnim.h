@@ -20,6 +20,12 @@ public:
 	USlAiPlayerAnim();
 
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
+
+	/*
+	 * 开启射线检测
+	 */
+	UFUNCTION(BlueprintCallable, Category = "SlAi")
+		void ChangeDetection(bool IsOpen);
 	
 public:
 

@@ -12,6 +12,7 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
+#include "Hand/SlAiHandObject.h"
 
 ASlAiPlayerController::ASlAiPlayerController()
 {
@@ -50,8 +51,20 @@ void ASlAiPlayerController::SetupInputComponent()
 void ASlAiPlayerController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
-	PlayerCharacter = Cast<ASlAiPlayerCharacter>(InPawn);
+	SPCharacter = Cast<ASlAiPlayerCharacter>(InPawn);
 	InitPlayerCharacter();
+}
+
+void ASlAiPlayerController::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	ChangePreUpperType(EUpperBodyAnim::None);
+}
+
+void ASlAiPlayerController::ChangeHandObject()
+{
+	SPCharacter->ChangeHandObject(ASlAiHandObject::SpawnHandObject(SPState->GetCurrHandleObjectIndex()));
 }
 
 void ASlAiPlayerController::BeginPlay()
@@ -64,16 +77,16 @@ void ASlAiPlayerController::BeginPlay()
 	InputMode.SetConsumeCaptureMouseDown(true);
 	SetInputMode(InputMode);
 
-	if (!PlayerState)
+	if (!SPState)
 	{
-		PlayerState = Cast<ASlAiPlayerState>(PlayerState);
+		SPState = Cast<ASlAiPlayerState>(PlayerState);
 	}
 }
 
 void ASlAiPlayerController::InitPlayerCharacter()
 {
-	PlayerCharacter->ChangeView(CurrViewType);
-	PlayerCharacter->MineController = this;
+	SPCharacter->ChangeView(CurrViewType);
+	SPCharacter->MineController = this;
 }
 
 #pragma region 移动实现
@@ -112,45 +125,38 @@ void ASlAiPlayerController::RegisterInputMove()
 		if(IA_MoveForward)
 		{
 			EnhancedInputComponent->BindAction(IA_MoveForward, ETriggerEvent::Triggered, this, &ASlAiPlayerController::MoveForward);
-			SlAiHelper::Debug(FString("IA_MoveForward>>>"),60.f);
 		}
 	
 		if(IA_MoveRight)
 		{
 			EnhancedInputComponent->BindAction(IA_MoveRight, ETriggerEvent::Triggered, this, &ASlAiPlayerController::MoveRight);
-			SlAiHelper::Debug(FString("IA_MoveRight>>>"),60.f);
 		}
 
 		if(IA_Turn)
 		{
 			EnhancedInputComponent->BindAction(IA_Turn, ETriggerEvent::Triggered, this, &ASlAiPlayerController::Turn);
-			SlAiHelper::Debug(FString("IA_Turn>>>"),60.f);
 		}
 		
 		if(IA_LookUp)
 		{
 			EnhancedInputComponent->BindAction(IA_LookUp, ETriggerEvent::Triggered, this, &ASlAiPlayerController::LookUpAtRate);
-			SlAiHelper::Debug(FString("IA_LookUp>>>"),60.f);
 		}
 
 		if(IA_TurnRate)
 		{
 			EnhancedInputComponent->BindAction(IA_TurnRate, ETriggerEvent::Triggered, this, &ASlAiPlayerController::TurnAtRate);
-			SlAiHelper::Debug(FString("IA_TurnRate>>>"),60.f);
 		}
 
 		if(IA_Jump)
 		{
 			EnhancedInputComponent->BindAction(IA_Jump, ETriggerEvent::Started, this, &ASlAiPlayerController::OnStartJump);
 			EnhancedInputComponent->BindAction(IA_Jump, ETriggerEvent::Completed, this, &ASlAiPlayerController::OnStopJump);
-			SlAiHelper::Debug(FString("IA_Jump>>>"),60.f);
 		}
 
 		if(IA_Run)
 		{
 			EnhancedInputComponent->BindAction(IA_Run, ETriggerEvent::Started, this, &ASlAiPlayerController::OnStartRun);
 			EnhancedInputComponent->BindAction(IA_Run, ETriggerEvent::Completed, this, &ASlAiPlayerController::OnStopRun);
-			SlAiHelper::Debug(FString("IA_Run>>>"),60.f);
 		}
 	}
 }
@@ -265,42 +271,35 @@ void ASlAiPlayerController::RegisterInputInteractive()
 		if(IA_ChangeView)
 		{
 			EnhancedInputComponent->BindAction(IA_ChangeView, ETriggerEvent::Started, this, &ASlAiPlayerController::OnChangeView);
-			SlAiHelper::Debug(FString("IA_ChangeView>>>"),60.f);
 		}
 
 		if(IA_LeftMouseClick)
 		{
 			EnhancedInputComponent->BindAction(IA_LeftMouseClick, ETriggerEvent::Started, this, &ASlAiPlayerController::OnLeftMouseClickStart);
 			EnhancedInputComponent->BindAction(IA_LeftMouseClick, ETriggerEvent::Completed, this, &ASlAiPlayerController::OnLeftMouseClickEnd);
-			SlAiHelper::Debug(FString("IA_LeftMouseClick>>>"),60.f);
 		}
 
 		if(IA_RightMouseClick)
 		{
 			EnhancedInputComponent->BindAction(IA_RightMouseClick, ETriggerEvent::Started, this, &ASlAiPlayerController::OnRightMouseClickStart);
 			EnhancedInputComponent->BindAction(IA_RightMouseClick, ETriggerEvent::Completed, this, &ASlAiPlayerController::OnRightMouseClickEnd);
-			SlAiHelper::Debug(FString("IA_RightMouseClick>>>"),60.f);
 		}
 
-		// if(IA_MouseScrollUp)
-		// {
-		// 	EnhancedInputComponent->BindAction(IA_MouseScrollUp, ETriggerEvent::Started, this, &ASlAiPlayerController::OnMouseScrollUp);
-		// 	//EnhancedInputComponent->BindAction(IA_MouseScrollUp, ETriggerEvent::Completed, this, &ASlAiPlayerController::OnRightMouseClickEnd);
-		// 	SlAiHelper::Debug(FString("IA_MouseScrollUp>>>"),60.f);
-		// }
-		//
-		// if(IA_MouseScrollDown)
-		// {
-		// 	EnhancedInputComponent->BindAction(IA_MouseScrollDown, ETriggerEvent::Started, this, &ASlAiPlayerController::OnMouseScrollDown);
-		// 	//EnhancedInputComponent->BindAction(IA_MouseScrollDown, ETriggerEvent::Completed, this, &ASlAiPlayerController::OnRightMouseClickEnd);
-		// 	SlAiHelper::Debug(FString("IA_MouseScrollDown>>>"),60.f);
-		// }
+		if(IA_MouseScrollUp)
+		{
+			EnhancedInputComponent->BindAction(IA_MouseScrollUp, ETriggerEvent::Started, this, &ASlAiPlayerController::OnMouseScrollUp);
+		}
+		
+		if(IA_MouseScrollDown)
+		{
+			EnhancedInputComponent->BindAction(IA_MouseScrollDown, ETriggerEvent::Started, this, &ASlAiPlayerController::OnMouseScrollDown);
+		}
 	}
 }
 
 void ASlAiPlayerController::OnChangeView(const FInputActionValue& Value)
 {
-	if (!PlayerCharacter->IsAllowSwitchView)
+	if (!SPCharacter->IsAllowSwitchView)
 	{
 		return;
 	}
@@ -317,36 +316,36 @@ void ASlAiPlayerController::OnChangeView(const FInputActionValue& Value)
 	}
 
 	CurrViewType = NewViewType;
-	PlayerCharacter->ChangeView(CurrViewType);
+	SPCharacter->ChangeView(CurrViewType);
 }
 
 void ASlAiPlayerController::OnLeftMouseClickStart(const FInputActionValue& Value)
 {
-	PlayerCharacter->UpperBodyAnim = LeftMouseClickAnim;
+	SPCharacter->UpperBodyAnim = LeftMouseClickAnim;
 	IsMouseLeftDown = true;
 }
 
 void ASlAiPlayerController::OnLeftMouseClickEnd(const FInputActionValue& Value)
 {
-	PlayerCharacter->UpperBodyAnim = EUpperBodyAnim::None;
+	SPCharacter->UpperBodyAnim = EUpperBodyAnim::None;
 	IsMouseLeftDown = false;
 }
 
 void ASlAiPlayerController::OnRightMouseClickStart(const FInputActionValue& Value)
 {
-	PlayerCharacter->UpperBodyAnim = RightMouseClickAnim;
+	SPCharacter->UpperBodyAnim = RightMouseClickAnim;
 	IsMouseRightDown = true;
 }
 
 void ASlAiPlayerController::OnRightMouseClickEnd(const FInputActionValue& Value)
 {
-	PlayerCharacter->UpperBodyAnim = EUpperBodyAnim::None;
+	SPCharacter->UpperBodyAnim = EUpperBodyAnim::None;
 	IsMouseRightDown = false;
 }
 
 void ASlAiPlayerController::OnMouseScrollUp(const FInputActionValue& Value)
 {
-	if (!PlayerCharacter->IsAllowSwitchView)
+	if (!SPCharacter->IsAllowSwitchView)
 	{
 		return;
 	}
@@ -355,12 +354,13 @@ void ASlAiPlayerController::OnMouseScrollUp(const FInputActionValue& Value)
 	{
 		return;
 	}
-	//PlayerState->ChooseShortcut(true);
+	SPState->ChooseShortcut(true);
+	ChangeHandObject();
 }
 
 void ASlAiPlayerController::OnMouseScrollDown(const FInputActionValue& Value)
 {
-	if (!PlayerCharacter->IsAllowSwitchView)
+	if (!SPCharacter->IsAllowSwitchView)
 	{
 		return;
 	}
@@ -369,11 +369,42 @@ void ASlAiPlayerController::OnMouseScrollDown(const FInputActionValue& Value)
     {
     	return;
     }
-	//PlayerState->ChooseShortcut(false);
+	SPState->ChooseShortcut(false);
+	ChangeHandObject();
 }
 
 
 #pragma endregion
+
+void ASlAiPlayerController::ChangePreUpperType(EUpperBodyAnim::Type RightType)
+{
+	TSharedPtr<ObjectAttr> ObjectAttr = SPState->GetCurrHandleObjectAttr();
+	if (!ObjectAttr)
+	{
+		return;
+	}
+	switch (ObjectAttr->ObjectType)
+	{
+	case EObjectType::Normal:
+		LeftMouseClickAnim = EUpperBodyAnim::Punch;
+		RightMouseClickAnim = RightType;
+		break;
+	case EObjectType::Food:
+		LeftMouseClickAnim = EUpperBodyAnim::Eat;
+		//右键状态是拾取就是拾取
+		RightMouseClickAnim = RightType == EUpperBodyAnim::None ? EUpperBodyAnim::Eat : RightType;
+		break;
+	case EObjectType::Tool:
+		LeftMouseClickAnim = EUpperBodyAnim::Hit;
+		RightMouseClickAnim = RightType;
+		break;
+	case EObjectType::Weapon:
+		LeftMouseClickAnim = EUpperBodyAnim::Fight;
+		RightMouseClickAnim = RightType;
+		break;
+	default: ;
+	}
+}
 
 
 

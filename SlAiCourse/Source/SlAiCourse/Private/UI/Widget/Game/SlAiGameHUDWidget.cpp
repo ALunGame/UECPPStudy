@@ -7,6 +7,7 @@
 #include "SlAiShortcutWidget.h"
 #include "SlAiStyle.h"
 #include "SlateOptMacros.h"
+#include "Interactive/SlAiRayInfoWidget.h"
 
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 
@@ -29,6 +30,13 @@ void SlAiGameHUDWidget::Construct(const FArguments& InArgs)
 			.VAlign(VAlign_Bottom)
 			[
 				SAssignNew(ShortcutWidget,SlAiShortcutWidget)
+			]
+
+			+SOverlay::Slot()
+			.HAlign(HAlign_Center)
+			.VAlign(VAlign_Top)
+			[
+				SAssignNew(RayInfoWidget,SlAiRayInfoWidget)
 			]
 		]
 	]; 

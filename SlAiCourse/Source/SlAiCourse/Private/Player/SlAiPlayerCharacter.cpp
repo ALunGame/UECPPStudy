@@ -9,6 +9,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Animation/AnimInstance.h"
 #include "Components/InputComponent.h"
+#include "Hand/SlAiHandObject.h"
 
 
 // Sets default values
@@ -90,6 +91,9 @@ ASlAiPlayerCharacter::ASlAiPlayerCharacter()
 	//默认动画状态
 	UpperBodyAnim = EUpperBodyAnim::None;
 
+	//实例化手上物品
+	HandObject = CreateDefaultSubobject<UChildActorComponent>(TEXT("HandObject"));
+
 	IsAllowSwitchView = false;
 }
 
@@ -97,6 +101,12 @@ ASlAiPlayerCharacter::ASlAiPlayerCharacter()
 void ASlAiPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//手持物品绑定到插槽上
+	HandObject->AttachToComponent(GetMesh(),FAttachmentTransformRules::SnapToTargetNotIncludingScale,FName("RHSocket"));
+
+	//添加Actor到HandObject
+	HandObject->SetChildActorClass(ASlAiHandObject::SpawnHandObject(0));
 }
 
 // Called every frame
@@ -122,6 +132,9 @@ void ASlAiPlayerCharacter::ChangeView(EViewType::Type ViewType)
 		//设置模型
 		GetMesh()->SetOwnerNoSee(true);
 		MeshFirst->SetOwnerNoSee(false);
+
+		//修改手持绑定位置
+		HandObject->AttachToComponent(MeshFirst,FAttachmentTransformRules::SnapToTargetNotIncludingScale,FName("RHSocket"));
 	}
 	else if (ViewType == EViewType::Third)
 	{
@@ -132,5 +145,29 @@ void ASlAiPlayerCharacter::ChangeView(EViewType::Type ViewType)
 		//设置模型
 		GetMesh()->SetOwnerNoSee(false);
 		MeshFirst->SetOwnerNoSee(true);
+
+		//修改手持绑定位置
+		HandObject->AttachToComponent(GetMesh(),FAttachmentTransformRules::SnapToTargetNotIncludingScale,FName("RHSocket"));
+	}
+}
+
+void ASlAiPlayerCharacter::ChangeHandObject(TSubclassOf<AActor> HandObjectClass = nullptr)
+{
+	if (!HandObjectClass)
+	{
+		HandObject->DestroyChildActor();
+		return;
+	}
+
+	//设置物品
+	HandObject->SetChildActorClass(HandObjectClass);
+}
+
+void ASlAiPlayerCharacter::ChangeHandObjectDetect(bool IsOpen)
+{
+	ASlAiHandObject* HandObjectClass = Cast<ASlAiHandObject>(HandObject->GetChildActor());
+	if (HandObjectClass)
+	{
+		HandObjectClass->ChangeOverlayDetect(IsOpen);
 	}
 }

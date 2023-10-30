@@ -17,27 +17,9 @@ void ASlAiPlayerState::OnRegisterShortcutContainer(TArray<TSharedPtr<ShortcutCon
 	TSharedPtr<STextBlock> ShortcutInfoTextBlock)
 {
 	SlAiHelper::DebugError("ASlAiPlayerState::OnRegisterShortcutContainer",600.f);
-
-	// for (ShortcutContainer Element : Containers)
-	// {
-	// 	ShortcutContainers.Add(Element);
-	// }
-	
-	// for (ShortcutContainer Container : Containers)
-	// {
-	// 	ShortcutContainers.Add(*Container);
-	// }
-
 	for (TArray<TSharedPtr<ShortcutContainer>>::TIterator It(*Containers); It; ++It) {
 		ShortcutContainers.Add(*It);
 	}
-	
-	// for (TArray<TSharedPtr<ShortcutContainer>>::TIterator It(*Containers); It; ++It)
-	// {
-	// 	ShortcutContainers.Add(*It);
-	// }
-	//ShortcutContainers = Containers;
-
 	//绑定属性
 	ShortcutInfoTextAttr.BindUObject(this,&ASlAiPlayerState::GetShortcutInfoText);
 	ShortcutInfoTextBlock->SetText(ShortcutInfoTextAttr);
@@ -65,7 +47,7 @@ void ASlAiPlayerState::ChooseShortcut(bool IsUp)
 	}
 	else
 	{
-		NextIndex = CurrShortcutIndex + 1 > TotalIndex ? 0 : CurrShortcutIndex + 1;
+		NextIndex = CurrShortcutIndex + 1 >= TotalIndex ? 0 : CurrShortcutIndex + 1;
 	}
 	
 	ShortcutContainers[CurrShortcutIndex]->SetChoose(false);
@@ -94,17 +76,30 @@ TSharedPtr<ObjectAttr> ASlAiPlayerState::GetCurrHandleObjectAttr() const
 	return ObjectAttr;
 }
 
+void ASlAiPlayerState::RegisterRayInfoEvent(TSharedPtr<STextBlock> RayInfoTextBlock)
+{
+	//绑定属性
+	RayInfoTextAttr.BindUObject(this,&ASlAiPlayerState::GetRayInfoText);
+	RayInfoTextBlock->SetText(ShortcutInfoTextAttr);
+}
+
 FText ASlAiPlayerState::GetShortcutInfoText() const
 {
-	// TSharedPtr<ObjectAttr> ObjectAttr = GetCurrHandleObjectAttr();
-	// switch (SlAiDataHandle::Get()->CurCulture)
-	// {
-	// case ECultureTeam::EN:
-	// 	return ObjectAttr->EN;
-	// case ECultureTeam::ZH:
-	// 	return ObjectAttr->ZH;
-	// }
-	// return ObjectAttr->ZH;
+	TSharedPtr<ObjectAttr> ObjectAttr = GetCurrHandleObjectAttr();
+	switch (SlAiDataHandle::Get()->CurCulture)
+	{
+	case ECultureTeam::EN:
+		return ObjectAttr->EN;
+	case ECultureTeam::ZH:
+		return ObjectAttr->ZH;
+	}
+	return ObjectAttr->ZH;
 
-	return FText::FromString(FString("aaa"));
+	//return FText::FromString(FString("aaa"));
+}
+
+FText ASlAiPlayerState::GetRayInfoText() const
+{
+	SlAiHelper::Debug("GetRayInfoText>>>>",100.f);
+	return FText::FromString("hhhh");
 }

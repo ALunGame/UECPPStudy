@@ -52,6 +52,9 @@ struct SLAICOURSE_API FSlAiGameStyle : public FSlateWidgetStyle
 	FSlateBrush ObjectBrush_6;
 	UPROPERTY(EditAnywhere, Category = Package)
 	FSlateBrush ObjectBrush_7;
+
+	UPROPERTY(EditAnywhere, Category = Info)
+	FSlateBrush RayInfoBrush;
 	
 	/*
 	* 60号字体

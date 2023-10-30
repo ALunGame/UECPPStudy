@@ -16,6 +16,8 @@ SlAiJsonHandle::SlAiJsonHandle()
 
 	ObjectAttrFileName = FString("ObjectAttribute.json");
 	
+	ResourceAttrFileName = FString("ResourceAttribute.json");
+	
 	RelativePath = FString("Res/ConfigData/");
 }
 
@@ -119,6 +121,57 @@ void SlAiJsonHandle::ObjectAttrJsonRead(TMap<int, TSharedPtr<ObjectAttr>>& Objec
 	}
 }
 
+void SlAiJsonHandle::ResourceAttrJsonRead(TMap<int, TSharedPtr<ResourceAttribute>>& ResourceAttrMap)
+{
+	FString JsonValue;
+	LoadStringFromFile(ResourceAttrFileName, RelativePath, JsonValue);
+
+	TArray<TSharedPtr<FJsonValue>> JsonParsed;
+	TSharedRef<TJsonReader<TCHAR>> JsonReader = TJsonReaderFactory<TCHAR>::Create(JsonValue);
+
+	if (FJsonSerializer::Deserialize(JsonReader, JsonParsed)) {
+		for (int i = 0; i < JsonParsed.Num(); ++i) {
+			TArray<TSharedPtr<FJsonValue>> ObjectValue = JsonParsed[i]->AsObject()->GetArrayField(FString::FromInt(i+1));
+			FText EN = FText::FromString(ObjectValue[0]->AsObject()->GetStringField("EN"));
+			FText ZH = FText::FromString(ObjectValue[1]->AsObject()->GetStringField("ZH"));
+			FString ResourceTypeStr = ObjectValue[2]->AsObject()->GetStringField("ResourceType");
+			int HP = ObjectValue[3]->AsObject()->GetIntegerField("HP");
+			
+			TArray<TArray<int>> FlobObjectInfoArray;
+
+			TArray<TSharedPtr<FJsonValue>> FlobObjectInfo = ObjectValue[4]->AsObject()->GetArrayField(FString("FlobObjectInfo"));
+
+			for (int j = 0; j < FlobObjectInfo.Num(); ++j) {
+
+				FString FlobObjectInfoItem = FlobObjectInfo[j]->AsObject()->GetStringField(FString::FromInt(j));
+				FString ObjectIndexStr;
+				FString RangeStr;
+				FString RangeMinStr;
+				FString RangeMaxStr;
+				FlobObjectInfoItem.Split(FString("_"), &ObjectIndexStr, &RangeStr);
+				RangeStr.Split(FString(","), &RangeMinStr, &RangeMaxStr);
+
+				TArray<int> FlobObjectInfoList;
+
+				//第一位是物品Id，后俩位是最小最大数量
+				FlobObjectInfoList.Add(FCString::Atoi(*ObjectIndexStr));
+				FlobObjectInfoList.Add(FCString::Atoi(*RangeMinStr));
+				FlobObjectInfoList.Add(FCString::Atoi(*RangeMaxStr));
+
+				FlobObjectInfoArray.Add(FlobObjectInfoList);
+			}
+
+			EResourceType::Type ResourceType = StringToResourceType(ResourceTypeStr);
+			TSharedPtr<ResourceAttribute> ResourceAttrPtr = MakeShareable(new ResourceAttribute(EN, ZH, ResourceType, HP, &FlobObjectInfoArray));
+
+			ResourceAttrMap.Add(i + 1, ResourceAttrPtr);
+		}
+	}
+	else {
+		SlAiHelper::Debug(FString("Deserialize Failed"));
+	}
+}
+
 bool SlAiJsonHandle::LoadStringFromFile(const FString& FileName, const FString& RelaPath, FString& ResultString)
 {
 	if (!FileName.IsEmpty()) {
@@ -191,5 +244,13 @@ EObjectType::Type SlAiJsonHandle::StringToObjectType(const FString ArgStr)
 	if (ArgStr.Equals(FString("Tool"))) return EObjectType::Tool;
 	if (ArgStr.Equals(FString("Weapon"))) return EObjectType::Weapon;
 	return EObjectType::Normal;
+}
+
+EResourceType::Type SlAiJsonHandle::StringToResourceType(const FString ArgStr)
+{
+	if (ArgStr.Equals(FString("Plant"))) return EResourceType::Plant;
+	if (ArgStr.Equals(FString("Metal"))) return EResourceType::Metal;
+	if (ArgStr.Equals(FString("Animal"))) return EResourceType::Animal;
+	return EResourceType::Plant;
 }
 

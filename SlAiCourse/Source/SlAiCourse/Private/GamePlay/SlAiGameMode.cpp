@@ -39,6 +39,7 @@ void ASlAiGameMode::InitGameplayMode()
 	SPController = Cast<ASlAiPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(),0));
 	SPCharacter = Cast<ASlAiPlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(),0));
 	SPState = Cast<ASlAiPlayerState>(SPController->PlayerState);
+	//SPState = Cast<ASlAiPlayerState>(SPController.state);
 }
 
 void ASlAiGameMode::BeginPlay()

@@ -29,12 +29,12 @@ public:
 	/*
 	 * 玩家
 	 */
-	ASlAiPlayerCharacter* PlayerCharacter;
+	ASlAiPlayerCharacter* SPCharacter;
 
 	/*
 	 * 状态
 	 */
-	ASlAiPlayerState* PlayerState;
+	ASlAiPlayerState* SPState;
 
 	/*
 	 * 左键动作
@@ -113,6 +113,13 @@ public:
 
 	virtual void OnPossess(APawn* InPawn) override;
 
+	virtual void Tick(float DeltaSeconds) override;
+	
+	/*
+	 * 修改当前手持物品
+	 */
+	void ChangeHandObject();
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -189,5 +196,8 @@ private:
 	void OnMouseScrollDown(const FInputActionValue& Value);
 	
 #pragma endregion
+
+	//修改动作
+	void ChangePreUpperType(EUpperBodyAnim::Type RightType);
 	
 };
