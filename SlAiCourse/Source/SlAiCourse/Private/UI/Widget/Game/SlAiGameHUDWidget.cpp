@@ -4,6 +4,7 @@
 #include "SlAiGameHUDWidget.h"
 
 #include "SDPIScaler.h"
+#include "SlAiPointerWidget.h"
 #include "SlAiShortcutWidget.h"
 #include "SlAiStyle.h"
 #include "SlateOptMacros.h"
@@ -37,6 +38,13 @@ void SlAiGameHUDWidget::Construct(const FArguments& InArgs)
 			.VAlign(VAlign_Top)
 			[
 				SAssignNew(RayInfoWidget,SlAiRayInfoWidget)
+			]
+
+			+SOverlay::Slot()
+			.HAlign(HAlign_Center)
+			.VAlign(VAlign_Center)
+			[
+				SAssignNew(PointerWidget,SlAiPointerWidget)
 			]
 		]
 	]; 

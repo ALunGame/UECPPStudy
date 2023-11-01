@@ -32,6 +32,9 @@ public:
 	//射线检测
 	TSharedPtr<class  SlAiRayInfoWidget> RayInfoWidget;
 
+	//射线检测
+	TSharedPtr<class  SlAiPointerWidget> PointerWidget;
+
 private:
 
 	//获取Menu样式

@@ -60,6 +60,10 @@ void ASlAiPlayerController::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 
 	ChangePreUpperType(EUpperBodyAnim::None);
+
+	static float TestRange = 1;
+	TestRange = FMath::FInterpTo(TestRange,0,DeltaSeconds,0.1f);
+	UpdatePointer.ExecuteIfBound(true,FMath::Clamp(TestRange,0.f,1.f));
 }
 
 void ASlAiPlayerController::ChangeHandObject()

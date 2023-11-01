@@ -4,7 +4,9 @@
 #include "SlAiGameHUD.h"
 
 #include "SlAiGameHUDWidget.h"
+#include "SlAiPlayerController.h"
 #include "SlAiPlayerState.h"
+#include "SlAiPointerWidget.h"
 #include "SlAiShortcutWidget.h"
 #include "SWeakWidget.h"
 #include "Interactive/SlAiRayInfoWidget.h"
@@ -36,4 +38,7 @@ void ASlAiGameHUD::BeginPlay()
 	GameHUDWidget->ShortcutWidget->RegisterShortcutContainer.BindUObject(GameMode->SPState,&ASlAiPlayerState::OnRegisterShortcutContainer);
 	//注册涉嫌信息委托
 	GameHUDWidget->RayInfoWidget->RegisterRayInfoEvent.BindUObject(GameMode->SPState,&ASlAiPlayerState::RegisterRayInfoEvent);
+
+	//绑定修改准星委托
+	GameMode->SPController->UpdatePointer.BindRaw(GameHUDWidget->PointerWidget.Get(),&SlAiPointerWidget::UpdatePointer);
 }

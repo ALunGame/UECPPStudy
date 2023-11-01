@@ -11,6 +11,7 @@
 
 class ASlAiPlayerState;
 
+DECLARE_DELEGATE_TwoParams(FUpdatePointer,bool,float)
 /**
  * 
  */
@@ -55,6 +56,9 @@ public:
 	 * 鼠标右键
 	 */
 	bool IsMouseRightDown;
+
+	//实时修改准星委托
+	FUpdatePointer UpdatePointer;
 
 #pragma region 移动输入映射
 	
