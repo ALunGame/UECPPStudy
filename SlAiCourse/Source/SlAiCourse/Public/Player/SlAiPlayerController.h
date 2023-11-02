@@ -60,6 +60,9 @@ public:
 	//实时修改准星委托
 	FUpdatePointer UpdatePointer;
 
+	//射线检测到的实体
+	AActor* RayActor;
+
 #pragma region 移动输入映射
 	
 	UPROPERTY(VisibleDefaultsOnly, Category="Input_Move")
@@ -203,5 +206,17 @@ private:
 
 	//修改动作
 	void ChangePreUpperType(EUpperBodyAnim::Type RightType);
+
+	//射线检测结果
+	FHitResult RayGetHitResult(FVector TraceStart, FVector TraceEnd);
+
+	//绘制射线
+	void DrawRayLine(FVector StartPos, FVector EndPos, float Duration);
+
+	//进行射线检测
+	void RunRayCast();
+
+	//行为状态机
+	void StateMechine();
 	
 };

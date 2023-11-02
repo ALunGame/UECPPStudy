@@ -4,40 +4,42 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "SlAiPickupObject.generated.h"
+#include "SlAiFlobObject.generated.h"
 
 UCLASS()
-class SLAICOURSE_API ASlAiPickupObject : public AActor
+class SLAICOURSE_API ASlAiFlobObject : public AActor
 {
 	GENERATED_BODY()
 
 public:
-
-	int ObjectIndex;
-
-public:
 	// Sets default values for this actor's properties
-	ASlAiPickupObject();
+	ASlAiFlobObject();
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	//获取物品信息
-	FText GetInfoText() const;
-
-	//拾取
-	int PickUp();
+	//初始化
+	void CreateFlobObject(int ObjectId);
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-protected:
+private:
 
-	//根组件
-	USceneComponent* RootScene;
+	class UBoxComponent* BoxCollision;
 
 	//模型
-	UStaticMeshComponent* BaseMesh;
+	class UStaticMeshComponent* BaseMesh;
 
+	//物品Id
+	int ObjectIndex;
+
+	class UTexture* ObjectIconTex;
+
+	class UMaterialInstanceDynamic* ObjectIconMatDynamic;
+	
+private:
+	
+	void RenderTexture();
 };

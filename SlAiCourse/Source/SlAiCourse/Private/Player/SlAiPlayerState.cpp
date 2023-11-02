@@ -80,7 +80,28 @@ void ASlAiPlayerState::RegisterRayInfoEvent(TSharedPtr<STextBlock> RayInfoTextBl
 {
 	//绑定属性
 	RayInfoTextAttr.BindUObject(this,&ASlAiPlayerState::GetRayInfoText);
-	RayInfoTextBlock->SetText(ShortcutInfoTextAttr);
+	RayInfoTextBlock->SetText(RayInfoTextAttr);
+}
+
+int ASlAiPlayerState::GetAffectRange()
+{
+	TSharedPtr<ObjectAttr> ObjectAttr = GetCurrHandleObjectAttr();
+	return ObjectAttr->AffectRange;
+}
+
+int ASlAiPlayerState::GetDamageValue(EResourceType::Type ResourceType)
+{
+	TSharedPtr<ObjectAttr> ObjectAttr = GetCurrHandleObjectAttr();
+	switch (ResourceType)
+	{
+	case EResourceType::Plant:
+		return ObjectAttr->PlantAttack;
+	case EResourceType::Metal:
+		return ObjectAttr->MetalAttcck;
+	case EResourceType::Animal:
+		return ObjectAttr->AnimalAttack;
+	}
+	return ObjectAttr->PlantAttack;
 }
 
 FText ASlAiPlayerState::GetShortcutInfoText() const
@@ -100,6 +121,5 @@ FText ASlAiPlayerState::GetShortcutInfoText() const
 
 FText ASlAiPlayerState::GetRayInfoText() const
 {
-	SlAiHelper::Debug("GetRayInfoText>>>>",100.f);
-	return FText::FromString("hhhh");
+	return RayInfoText;
 }

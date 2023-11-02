@@ -24,7 +24,7 @@ USlAiThirdPlayerAnim::USlAiThirdPlayerAnim()
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> PlayerEatMon(TEXT("/Script/Engine.AnimMontage'/Game/Res/PolygonAdventure/Mannequin/Player/Animation/UpperBody/PlayerEatMontage.PlayerEatMontage'"));
 	MontageMap.Add(EUpperBodyAnim::Eat,PlayerEatMon.Object);
 
-	static ConstructorHelpers::FObjectFinder<UAnimMontage> PlayerPickUpMon(TEXT("/Script/Engine.AnimMontage'/Game/Res/PolygonAdventure/Mannequin/Player/Animation/UpperBody/PlayerEatMontage.PlayerEatMontage'"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> PlayerPickUpMon(TEXT("/Script/Engine.AnimMontage'/Game/Res/PolygonAdventure/Mannequin/Player/Animation/UpperBody/PlayerPickUpMontage.PlayerPickUpMontage'"));
 	MontageMap.Add(EUpperBodyAnim::PickUp,PlayerPickUpMon.Object);
 
 	ViewType = EViewType::Third;

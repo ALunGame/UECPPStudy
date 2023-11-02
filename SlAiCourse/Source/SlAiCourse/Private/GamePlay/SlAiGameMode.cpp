@@ -44,11 +44,13 @@ void ASlAiGameMode::InitGameplayMode()
 
 void ASlAiGameMode::BeginPlay()
 {
-	SlAiHelper::DebugWarning(FString("DataHandle:" + SlAiDataHandle::Get()->RecordName),30.f);
-	SlAiHelper::DebugWarning(FString("GameInstance:" + Cast<USlAiGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->GameName),30.f);
+	//SlAiHelper::DebugWarning(FString("DataHandle:" + SlAiDataHandle::Get()->RecordName),30.f);
+	//SlAiHelper::DebugWarning(FString("GameInstance:" + Cast<USlAiGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->GameName),30.f);
 
 	SlAiDataHandle::Get()->InitGameData();
 
+	SlAiHelper::DebugWarning(FString("InitGameData:" + SlAiDataHandle::Get()->RecordName),30.f);
+	
 	if (!SPController)
 	{
 		InitGameplayMode();

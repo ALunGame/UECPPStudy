@@ -20,6 +20,9 @@ public:
 	//当前选中的物品Id
 	int CurrShortcutIndex;
 
+	//射线检测信息
+	FText RayInfoText;
+
 public:
 	ASlAiPlayerState();
 	
@@ -36,6 +39,12 @@ public:
 
 	//提供射线信息
 	void RegisterRayInfoEvent(TSharedPtr<STextBlock> RayInfoTextBlock);
+
+	//获得交互距离
+	int GetAffectRange();
+
+	//获得伤害值
+	int GetDamageValue(EResourceType::Type ResourceType);
 	
 private:
 

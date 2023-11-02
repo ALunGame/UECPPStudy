@@ -22,10 +22,16 @@ public:
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
 	/*
-	 * 开启射线检测
+	 * 开启或者关闭手上物品的交互检测
 	 */
 	UFUNCTION(BlueprintCallable, Category = "SlAi")
 		void ChangeDetection(bool IsOpen);
+
+	/*
+	* 开启或者关闭手上物品的显示，捡东西调用
+	*/
+	UFUNCTION(BlueprintCallable, Category = "SlAi")
+		void RenderHandleObject(bool IsOpen);
 	
 public:
 

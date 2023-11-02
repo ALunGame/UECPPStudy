@@ -30,6 +30,15 @@ void USlAiPlayerAnim::ChangeDetection(bool IsOpen)
 	SPCharacter->ChangeHandObjectDetect(IsOpen);
 }
 
+void USlAiPlayerAnim::RenderHandleObject(bool IsOpen)
+{
+	if (!SPCharacter)
+    {
+    	return;
+    }
+	SPCharacter->ChangeHandObjectRender(IsOpen);
+}
+
 void USlAiPlayerAnim::UpdateMontage()
 {
 	if (SPCharacter->MineController == nullptr)

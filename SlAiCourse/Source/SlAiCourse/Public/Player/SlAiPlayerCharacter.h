@@ -65,6 +65,11 @@ public:
 	*/
 	void ChangeHandObjectDetect(bool IsOpen);
 
+	/*
+	* 修改物品的显示
+	*/
+	void ChangeHandObjectRender(bool IsOpen);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

@@ -13,6 +13,11 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
 #include "Hand/SlAiHandObject.h"
+#include "CollisionQueryParams.h"
+#include "SlAiPickupObject.h"
+#include "SlAiResourceObject.h"
+#include "Camera/CameraComponent.h"
+#include "Components/LineBatchComponent.h"
 
 ASlAiPlayerController::ASlAiPlayerController()
 {
@@ -61,9 +66,15 @@ void ASlAiPlayerController::Tick(float DeltaSeconds)
 
 	ChangePreUpperType(EUpperBodyAnim::None);
 
-	static float TestRange = 1;
-	TestRange = FMath::FInterpTo(TestRange,0,DeltaSeconds,0.1f);
-	UpdatePointer.ExecuteIfBound(true,FMath::Clamp(TestRange,0.f,1.f));
+	// static float TestRange = 1;
+	// TestRange = FMath::FInterpTo(TestRange,0,DeltaSeconds,0.1f);
+	// UpdatePointer.ExecuteIfBound(true,FMath::Clamp(TestRange,0.f,1.f));
+
+	//射线检测
+	RunRayCast();
+
+	//动作
+	StateMechine();
 }
 
 void ASlAiPlayerController::ChangeHandObject()
@@ -407,6 +418,117 @@ void ASlAiPlayerController::ChangePreUpperType(EUpperBodyAnim::Type RightType)
 		RightMouseClickAnim = RightType;
 		break;
 	default: ;
+	}
+}
+
+FHitResult ASlAiPlayerController::RayGetHitResult(FVector TraceStart, FVector TraceEnd)
+{
+	//FCollisionQueryParams TraceParams(true);
+	FCollisionQueryParams TraceParams(FName(TEXT("TraceParams")), true,this);
+	TraceParams.AddIgnoredActor(SPCharacter);
+	TraceParams.bReturnPhysicalMaterial = false;
+	TraceParams.bTraceComplex = true;
+
+	FHitResult Hit(ForceInit);
+	if (GetWorld()->LineTraceSingleByChannel(Hit,TraceStart,TraceEnd,ECollisionChannel::ECC_GameTraceChannel1,TraceParams))
+	{
+		DrawRayLine(TraceStart,TraceEnd,5.f);
+	}
+	return Hit;
+}
+
+void ASlAiPlayerController::DrawRayLine(FVector StartPos, FVector EndPos, float Duration)
+{
+	ULineBatchComponent* const LineBatcher = GetWorld()->PersistentLineBatcher;
+	if (LineBatcher != nullptr)
+	{
+		float LineDuration = (Duration > 0.f) ? Duration : LineBatcher->DefaultLifeTime;
+		LineBatcher->DrawLine(StartPos, EndPos, FLinearColor::Red, 10, 0.f,LineDuration);		
+	}
+}
+
+void ASlAiPlayerController::RunRayCast()
+{
+	FVector StartPos(0.f);
+	FVector EndPos(0.f);
+
+	switch (CurrViewType)
+	{
+	case EViewType::First:
+		StartPos = SPCharacter->FirstCamera->K2_GetComponentLocation();
+		EndPos = StartPos + SPCharacter->FirstCamera->GetForwardVector() * 2000.f;
+		break;
+	case EViewType::Third:
+		StartPos = SPCharacter->ThirdCamera->K2_GetComponentLocation();
+		StartPos = StartPos + SPCharacter->ThirdCamera->GetForwardVector() * 300.f;
+		EndPos = StartPos + SPCharacter->ThirdCamera->GetForwardVector() * 2000.f;
+		break;
+	default: ;
+	}
+
+	bool IsDetected = false;
+	FHitResult Hit = RayGetHitResult(StartPos, EndPos);
+	RayActor = Hit.GetActor();
+
+	if (Cast<ASlAiPickupObject>(RayActor))
+	{
+		IsDetected = true;
+		SPState->RayInfoText = Cast<ASlAiPickupObject>(RayActor)->GetInfoText();
+	}
+	if (Cast<ASlAiResourceObject>(RayActor))
+	{
+		IsDetected = true;
+		SPState->RayInfoText = Cast<ASlAiResourceObject>(RayActor)->GetInfoText();
+	}
+
+	if (!IsDetected)
+	{
+		SPState->RayInfoText = FText();
+	}
+}
+
+void ASlAiPlayerController::StateMechine()
+{
+	ChangePreUpperType(EUpperBodyAnim::None);
+
+	//未锁定
+	if (!Cast<ASlAiPickupObject>(RayActor) && !Cast<ASlAiResourceObject>(RayActor))
+	{
+		UpdatePointer.ExecuteIfBound(false,1.f);
+		return;
+	}
+
+	//资源
+	if (Cast<ASlAiResourceObject>(RayActor))
+	{
+		//左键按下
+		if (!IsMouseLeftDown)
+		{
+			UpdatePointer.ExecuteIfBound(false,0.f);
+		}
+
+		//按下并且在交互范围内
+		if (IsMouseLeftDown && FVector::Distance(RayActor->GetActorLocation(), SPCharacter->GetActorLocation()) < SPState->GetAffectRange())
+		{
+			//获得伤害
+			int Damage = SPState->GetDamageValue(Cast<ASlAiResourceObject>(RayActor)->GetResourceType());
+			float Range = Cast<ASlAiResourceObject>(RayActor)->TakeObjectDamage(Damage)->GetHPRange();
+			UpdatePointer.ExecuteIfBound(true,Range);
+		}
+	}
+
+	//拾取物品,并且距离小于300
+	if (Cast<ASlAiPickupObject>(RayActor) && FVector::Distance(RayActor->GetActorLocation(), SPCharacter->GetActorLocation()) <= 300.f)
+	{
+		//改变右手拾取
+		ChangePreUpperType(EUpperBodyAnim::PickUp);
+		//锁定模式
+		UpdatePointer.ExecuteIfBound(false,0.f);
+		//右键按下
+		if (IsMouseRightDown)
+		{
+			int ObjectIndex = Cast<ASlAiPickupObject>(RayActor)->PickUp();
+		}
 	}
 }
 

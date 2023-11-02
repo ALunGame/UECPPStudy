@@ -171,3 +171,12 @@ void ASlAiPlayerCharacter::ChangeHandObjectDetect(bool IsOpen)
 		HandObjectClass->ChangeOverlayDetect(IsOpen);
 	}
 }
+
+void ASlAiPlayerCharacter::ChangeHandObjectRender(bool IsOpen)
+{
+	if (!HandObject)
+	{
+		return;
+	}
+	HandObject->GetChildActor()->SetActorHiddenInGame(!IsOpen);
+}

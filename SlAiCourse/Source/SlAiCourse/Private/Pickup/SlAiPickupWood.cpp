@@ -15,6 +15,13 @@ ASlAiPickupWood::ASlAiPickupWood()
 
 	BaseMesh->SetRelativeScale3D(FVector(0.4f));
 
+	//随机种子
+	FRandomStream Stream;
+	Stream.GenerateNewSeed();
+	int RangeRoate = Stream.RandRange(-180,180);
+	
+	BaseMesh->SetRelativeRotation(FRotator(0,RangeRoate,0));
+
 	ObjectIndex = 1;
 }
 
