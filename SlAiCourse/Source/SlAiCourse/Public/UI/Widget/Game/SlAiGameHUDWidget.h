@@ -35,6 +35,9 @@ public:
 	//射线检测
 	TSharedPtr<class  SlAiPointerWidget> PointerWidget;
 
+	//玩家状态
+	TSharedPtr<class  SlAiPlayerStateWidget> PlayerStateWidget;
+
 private:
 
 	//获取Menu样式

@@ -7,6 +7,9 @@
 #include "GameFramework/PlayerState.h"
 #include "SlAiPlayerState.generated.h"
 
+
+DECLARE_DELEGATE_TwoParams(FUpdateStateWidget, float, float)
+
 /**
  * 
  */
@@ -23,10 +26,15 @@ public:
 	//射线检测信息
 	FText RayInfoText;
 
+	//更新血量和饥饿
+	FUpdateStateWidget UpdateStateWidget;
+
 public:
 	ASlAiPlayerState();
 	
 	void OnRegisterShortcutContainer(TArray<TSharedPtr<ShortcutContainer>>* Containers, TSharedPtr<STextBlock> ShortcutInfoTextBlock);
+
+	virtual void Tick(float DeltaSeconds) override;
 
 	//切换快捷栏
 	void ChooseShortcut(bool IsUp);
@@ -55,6 +63,10 @@ private:
 
 	//射线信息
 	TAttribute<FText> RayInfoTextAttr;
+
+	//血量和饥饿
+	float HP;
+	float Hunger;
 
 private:
 

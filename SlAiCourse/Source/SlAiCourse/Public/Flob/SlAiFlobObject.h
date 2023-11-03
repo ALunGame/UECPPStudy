@@ -38,8 +38,23 @@ private:
 	class UTexture* ObjectIconTex;
 
 	class UMaterialInstanceDynamic* ObjectIconMatDynamic;
+
+	//玩家指针
+	class ASlAiPlayerCharacter* SPCharacter;
+
+	//定时检测
+	FTimerHandle DetectTime;
+
+	//销毁检测
+	FTimerHandle DestroyTime;
 	
 private:
 	
 	void RenderTexture();
+
+	//检测玩家
+	void DetectPlayer();
+
+	//销毁
+	void DestroyEvent();
 };

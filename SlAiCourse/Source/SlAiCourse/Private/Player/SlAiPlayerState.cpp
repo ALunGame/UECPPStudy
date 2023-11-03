@@ -9,8 +9,13 @@
 
 ASlAiPlayerState::ASlAiPlayerState()
 {
+	PrimaryActorTick.bCanEverTick = true;
+	
 	//当前选中的快捷栏Id
 	CurrShortcutIndex = 0;
+
+	HP = 500;
+	Hunger = 600;
 }
 
 void ASlAiPlayerState::OnRegisterShortcutContainer(TArray<TSharedPtr<ShortcutContainer>>* Containers,
@@ -33,6 +38,28 @@ void ASlAiPlayerState::OnRegisterShortcutContainer(TArray<TSharedPtr<ShortcutCon
 	ShortcutContainers[5]->SetObject(5)->SetObjectNum(5);
 	ShortcutContainers[6]->SetObject(6)->SetObjectNum(7);
 	ShortcutContainers[7]->SetObject(7)->SetObjectNum(55);
+}
+
+void ASlAiPlayerState::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	if (Hunger <= 0)
+	{
+		HP -= DeltaSeconds * 2;
+	}
+	else
+	{
+		Hunger -= DeltaSeconds * 2;
+		HP += DeltaSeconds;
+	}
+
+	//设定范围
+	HP = FMath::Clamp(HP,0.f,500.f);
+	Hunger = FMath::Clamp(Hunger,0.f,600.f);
+
+	//执行委托
+	UpdateStateWidget.ExecuteIfBound(HP/500.f,Hunger/600.f);
 }
 
 void ASlAiPlayerState::ChooseShortcut(bool IsUp)

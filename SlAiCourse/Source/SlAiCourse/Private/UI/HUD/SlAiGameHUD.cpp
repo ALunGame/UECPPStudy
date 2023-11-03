@@ -11,6 +11,7 @@
 #include "SWeakWidget.h"
 #include "Interactive/SlAiRayInfoWidget.h"
 #include "Kismet/GameplayStatics.h"
+#include "Player/SlAiPlayerStateWidget.h"
 
 ASlAiGameHUD::ASlAiGameHUD()
 {
@@ -41,4 +42,7 @@ void ASlAiGameHUD::BeginPlay()
 
 	//绑定修改准星委托
 	GameMode->SPController->UpdatePointer.BindRaw(GameHUDWidget->PointerWidget.Get(),&SlAiPointerWidget::UpdatePointer);
+
+	//绑定修改状态
+	GameMode->SPState->UpdateStateWidget.BindRaw(GameHUDWidget->PlayerStateWidget.Get(),&SlAiPlayerStateWidget::UpdateStateWidget);
 }

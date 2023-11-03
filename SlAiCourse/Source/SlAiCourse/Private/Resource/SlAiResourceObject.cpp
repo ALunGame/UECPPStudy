@@ -55,7 +55,7 @@ void ASlAiResourceObject::CreateFlobObject()
 		{
 			for (int i = 0; i < Num; ++i)
 			{
-				ASlAiFlobObject* FlobObject = GetWorld()->SpawnActor<ASlAiFlobObject>(GetActorLocation(),FRotator::ZeroRotator);
+				ASlAiFlobObject* FlobObject = GetWorld()->SpawnActor<ASlAiFlobObject>(GetActorLocation() + FVector(0.f,0.f,20.f),FRotator::ZeroRotator);
 				FlobObject->CreateFlobObject((*It)[0]);
 			}
 		}

@@ -59,6 +59,26 @@ struct SLAICOURSE_API FSlAiGameStyle : public FSlateWidgetStyle
 	//准星材质
 	UPROPERTY(EditAnywhere, Category = Info)
 	FSlateBrush PointerBrush;
+
+	//玩家状态UI背景图
+	UPROPERTY(EditAnywhere, Category = PlayerState)
+	FSlateBrush PlayerStateBGBrush;
+
+	//玩家头像背景图
+	UPROPERTY(EditAnywhere, Category = PlayerState)
+	FSlateBrush PlayerHeadBGBrush;
+
+	//血条
+	UPROPERTY(EditAnywhere, Category = PlayerState)
+	FSlateBrush HPBrush;
+
+	//饥饿
+	UPROPERTY(EditAnywhere, Category = PlayerState)
+	FSlateBrush HungerBrush;
+
+	//头像
+	UPROPERTY(EditAnywhere, Category = PlayerState)
+	FSlateBrush PlayerHeadBrush;
 	
 	/*
 	* 60号字体

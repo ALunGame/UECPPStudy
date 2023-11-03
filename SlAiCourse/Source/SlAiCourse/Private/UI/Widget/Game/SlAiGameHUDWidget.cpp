@@ -9,6 +9,7 @@
 #include "SlAiStyle.h"
 #include "SlateOptMacros.h"
 #include "Interactive/SlAiRayInfoWidget.h"
+#include "Player/SlAiPlayerStateWidget.h"
 
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 
@@ -45,6 +46,13 @@ void SlAiGameHUDWidget::Construct(const FArguments& InArgs)
 			.VAlign(VAlign_Center)
 			[
 				SAssignNew(PointerWidget,SlAiPointerWidget)
+			]
+
+			+SOverlay::Slot()
+			.HAlign(HAlign_Left)
+			.VAlign(VAlign_Top)
+			[
+				SAssignNew(PlayerStateWidget,SlAiPlayerStateWidget)
 			]
 		]
 	]; 
