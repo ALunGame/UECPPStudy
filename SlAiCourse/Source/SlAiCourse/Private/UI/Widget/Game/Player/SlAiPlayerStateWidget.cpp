@@ -3,12 +3,14 @@
 
 #include "Player/SlAiPlayerStateWidget.h"
 
+#include "ConstructorHelpers.h"
 #include "SConstraintCanvas.h"
 #include "SlAiGameWidgetStyle.h"
 #include "SlAiHelper.h"
 #include "SlAiStyle.h"
 #include "SlateOptMacros.h"
 #include "SProgressBar.h"
+#include "Materials/MaterialInstanceDynamic.h"
 
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 
@@ -46,11 +48,8 @@ void SlAiPlayerStateWidget::Construct(const FArguments& InArgs)
 				.Anchors(FAnchors(0.f))			//描点左上
 				.Offset(FMargin(442.3f,90.f,418.f,42.f))
 				[
-					SAssignNew(HPBar,SProgressBar)
-					.BackgroundImage(&GameStyle->EmptyBrush)
-					.FillImage(&GameStyle->HPBrush)
-					.FillColorAndOpacity(FSlateColor(FLinearColor(1.f, 1.f, 1.f, 1.f)))
-					.Percent(1.f)
+					SNew(SImage)
+					.Image(&GameStyle->HPBrush)
 				]
 
 				//饥饿条
@@ -58,11 +57,9 @@ void SlAiPlayerStateWidget::Construct(const FArguments& InArgs)
 				.Anchors(FAnchors(0.f))			//描点左上
 				.Offset(FMargin(397.5f, 145.f, 317.f, 26.f))
 				[
-					SAssignNew(HungerBar,SProgressBar)
-					.BackgroundImage(&GameStyle->EmptyBrush)
-					.FillImage(&GameStyle->HungerBrush)
-					.FillColorAndOpacity(FSlateColor(FLinearColor(1.f, 1.f, 1.f, 1.f)))
-					.Percent(1.f)
+
+					SNew(SImage)
+					.Image(&GameStyle->HungerBrush)
 				]
 			]
 
@@ -92,18 +89,25 @@ void SlAiPlayerStateWidget::Construct(const FArguments& InArgs)
 			]
 		]
 	];
+
+
+	//加载材质
+	static ConstructorHelpers::FObjectFinder<UMaterialInstance> StaticHpMatInstance(TEXT("/Script/Engine.MaterialInstanceConstant'/Game/Material/PlayerHPStateMat_Inst.PlayerHPStateMat_Inst'"));
+	HPMaterial = (UMaterialInstanceDynamic*)StaticHpMatInstance.Object;
+	static ConstructorHelpers::FObjectFinder<UMaterialInstance> StaticHungerMatInstance(TEXT("/Script/Engine.MaterialInstanceConstant'/Game/Material/PlayerHungreStateMat_Inst.PlayerHungreStateMat_Inst'"));
+    HungerMaterial = (UMaterialInstanceDynamic*)StaticHungerMatInstance.Object;
 }
 
 void SlAiPlayerStateWidget::UpdateStateWidget(float HPValue, float HungerValue)
 {
 	if (HPValue > 0)
 	{
-		HPBar->SetPercent(FMath::Clamp<float>(HPValue,0.f,1.f));
+		HPMaterial->SetScalarParameterValue(FName("Range"),FMath::Clamp<float>(HPValue,0.f,1.f));
 	}
 	
 	if (HungerValue > 0)
 	{
-		HungerBar->SetPercent(FMath::Clamp<float>(HungerValue,0.f,1.f));
+		HungerMaterial->SetScalarParameterValue(FName("Range"),FMath::Clamp<float>(HPValue,0.f,1.f));
 	}
 }
 

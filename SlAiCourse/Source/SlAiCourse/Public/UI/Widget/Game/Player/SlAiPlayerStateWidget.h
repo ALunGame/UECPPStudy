@@ -26,8 +26,7 @@ public:
 private:
 	//获取Menu样式
 	const struct FSlAiGameStyle *GameStyle;
-
-	TSharedPtr<class SProgressBar> HPBar;
 	
-	TSharedPtr<class SProgressBar> HungerBar;
+	class UMaterialInstanceDynamic* HPMaterial;
+	class UMaterialInstanceDynamic* HungerMaterial;
 };
