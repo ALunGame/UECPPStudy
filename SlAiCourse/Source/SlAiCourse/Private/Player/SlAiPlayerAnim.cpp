@@ -39,6 +39,15 @@ void USlAiPlayerAnim::RenderHandleObject(bool IsOpen)
 	SPCharacter->ChangeHandObjectRender(IsOpen);
 }
 
+void USlAiPlayerAnim::EatupEvent()
+{
+	if (!SPCharacter)
+	{
+		return;
+	}
+	SPCharacter->EatUpEvent();
+}
+
 void USlAiPlayerAnim::UpdateMontage()
 {
 	if (SPCharacter->MineController == nullptr)

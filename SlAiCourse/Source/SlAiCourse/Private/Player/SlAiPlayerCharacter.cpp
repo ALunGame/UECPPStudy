@@ -4,6 +4,11 @@
 #include "Player/SlAiPlayerCharacter.h"
 
 #include "ConstructorHelpers.h"
+#include "SlAiBagManager.h"
+#include "SlAiDataHandle.h"
+#include "SlAiFlobObject.h"
+#include "SlAiPlayerController.h"
+#include "SlAiPlayerState.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -180,3 +185,39 @@ void ASlAiPlayerCharacter::ChangeHandObjectRender(bool IsOpen)
 	}
 	HandObject->GetChildActor()->SetActorHiddenInGame(!IsOpen);
 }
+
+void ASlAiPlayerCharacter::PlayerThrowObject(int ObjectID, int Num)
+{
+	if (GetWorld())
+	{
+		for (int i = 0; i < Num; ++i)
+		{
+			ASlAiFlobObject* FlobObject = GetWorld()->SpawnActor<ASlAiFlobObject>(GetActorLocation() + FVector(0.f,0.f,50.f),FRotator::ZeroRotator);
+			FlobObject->ThrowFlobObject(ObjectID,GetActorRotation().Yaw);
+		}
+	}
+}
+
+bool ASlAiPlayerCharacter::IsBagFree(int ObjectID)
+{
+	return SlAiBagManager::Get()->SearchFreeSpace(ObjectID);
+}
+
+void ASlAiPlayerCharacter::AddObject(int ObjectID)
+{
+	SlAiBagManager::Get()->AddObject(ObjectID);
+}
+
+void ASlAiPlayerCharacter::EatUpEvent()
+{
+	if (!MineController->SPState)
+	{
+		return;
+	}
+	if (SlAiBagManager::Get()->EatUpEvent(MineController->SPState->CurrShortcutIndex))
+	{
+		MineController->SPState->PromoteHungry();			
+	}
+}
+
+

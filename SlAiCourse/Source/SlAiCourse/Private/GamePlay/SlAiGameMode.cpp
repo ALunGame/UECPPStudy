@@ -3,6 +3,7 @@
 
 #include "SlAiGameMode.h"
 
+#include "SlAiBagManager.h"
 #include "SlAiDataHandle.h"
 #include "SlAiGameHUD.h"
 #include "SlAiGameInstance.h"
@@ -27,11 +28,13 @@ ASlAiGameMode::ASlAiGameMode()
 	// PlayerStateClass = ASlAiPlayerState::StaticClass();
 	
 	DefaultPawnClass = ASlAiPlayerCharacter::StaticClass();
+
+	IsInitBag = false;
 }
 
 void ASlAiGameMode::Tick(float DeltaSeconds)
 {
-	
+	InitBagManager();
 }
 
 void ASlAiGameMode::InitGameplayMode()
@@ -55,4 +58,20 @@ void ASlAiGameMode::BeginPlay()
 	{
 		InitGameplayMode();
 	}
+}
+
+void ASlAiGameMode::InitBagManager()
+{
+	if (IsInitBag)
+	{
+		return;
+	}
+	IsInitBag = true;
+
+	//执行委托
+	InitBagManger.ExecuteIfBound();
+
+	//绑定委托
+	SlAiBagManager::Get()->PlayerThrowObject.BindUObject(SPCharacter,&ASlAiPlayerCharacter::PlayerThrowObject);
+	SlAiBagManager::Get()->ChangeHandObject.BindUObject(SPState,&ASlAiPlayerState::ChangeHandObject);
 }

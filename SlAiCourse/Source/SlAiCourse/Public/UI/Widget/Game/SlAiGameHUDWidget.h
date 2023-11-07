@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "SCompoundWidget.h"
+#include "SlAiTypes.h"
 #include "UI/Style/SlAiGameWidgetStyle.h"
 
 /**
@@ -20,6 +21,8 @@ public:
 
 	/** Constructs this widget with InArgs */
 	void Construct(const FArguments& InArgs);
+
+	void ShowGameUI(EGameUIType::Type PreUI,EGameUIType::Type NextUI);
 
 public:
 	
@@ -38,6 +41,19 @@ public:
 	//玩家状态
 	TSharedPtr<class  SlAiPlayerStateWidget> PlayerStateWidget;
 
+	//游戏菜单
+	TSharedPtr<class  SlAiGameMenuWidget> GameMenuWidget;
+
+	//游戏聊天
+	TSharedPtr<class  SlAiChatRoomWidget> ChatRoomWidget;
+
+	//背包
+	TSharedPtr<class  SlAiBagWidget> BagWidget;
+
+private:
+
+	void InitUIMap();
+
 private:
 
 	//获取Menu样式
@@ -47,4 +63,9 @@ private:
 	float GetUIScaler() const;
 	//获得屏幕尺寸
 	FVector2d GetViewportSize() const;
+
+	TSharedPtr<class SBorder> BlackShade;
+
+	//UIMap
+	TMap<EGameUIType::Type,TSharedPtr<SCompoundWidget>> UIMap;
 };

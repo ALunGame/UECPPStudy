@@ -37,6 +37,8 @@ ASlAiPlayerController::ASlAiPlayerController()
 
 	IsMouseLeftDown = false;
 	IsMouseRightDown = false;
+
+	IsInputLocked = false;
 }
 
 void ASlAiPlayerController::SetupInputComponent()
@@ -96,6 +98,8 @@ void ASlAiPlayerController::BeginPlay()
 	{
 		SPState = Cast<ASlAiPlayerState>(PlayerState);
 	}
+
+	CurrUIType = EGameUIType::Game;
 }
 
 void ASlAiPlayerController::InitPlayerCharacter()
@@ -178,6 +182,10 @@ void ASlAiPlayerController::RegisterInputMove()
 
 void ASlAiPlayerController::MoveForward(const FInputActionValue& Value)
 {
+	if (IsInputLocked)
+	{
+		return;
+	}
 	if ((GetPawn() != nullptr) && Value.IsNonZero())
 	{
 		//找到当前前方方向
@@ -193,6 +201,10 @@ void ASlAiPlayerController::MoveForward(const FInputActionValue& Value)
 
 void ASlAiPlayerController::MoveRight(const FInputActionValue& Value)
 {
+	if (IsInputLocked)
+	{
+		return;
+	}
 	if ((GetPawn() != nullptr) && (Value.IsNonZero()))
 	{
 		//找到当前右方向
@@ -208,21 +220,37 @@ void ASlAiPlayerController::MoveRight(const FInputActionValue& Value)
 
 void ASlAiPlayerController::LookUpAtRate(const FInputActionValue& Value)
 {
+	if (IsInputLocked)
+	{
+		return;
+	}
 	AddPitchInput(Value.GetMagnitude() * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
 void ASlAiPlayerController::Turn(const FInputActionValue& Value)
 {
+	if (IsInputLocked)
+	{
+		return;
+	}
 	AddYawInput(Value.GetMagnitude());
 }
 
 void ASlAiPlayerController::TurnAtRate(const FInputActionValue& Value)
 {
+	if (IsInputLocked)
+	{
+		return;
+	}
 	AddYawInput(Value.GetMagnitude() * BaseTurnRate * GetWorld()->GetDeltaSeconds());
 }
 
 void ASlAiPlayerController::OnStartJump(const FInputActionValue& Value)
 {
+	if (IsInputLocked)
+	{
+		return;
+	}
 	if ((GetPawn() != nullptr))
 	{
 		Cast<ACharacter>(GetPawn())->bPressedJump = true;
@@ -231,6 +259,10 @@ void ASlAiPlayerController::OnStartJump(const FInputActionValue& Value)
 
 void ASlAiPlayerController::OnStopJump(const FInputActionValue& Value)
 {
+	if (IsInputLocked)
+	{
+		return;
+	}
 	if ((GetPawn() != nullptr))
 	{
 		Cast<ACharacter>(GetPawn())->bPressedJump = false;
@@ -240,6 +272,10 @@ void ASlAiPlayerController::OnStopJump(const FInputActionValue& Value)
 
 void ASlAiPlayerController::OnStartRun(const FInputActionValue& Value)
 {
+	if (IsInputLocked)
+	{
+		return;
+	}
 	if ((GetPawn() != nullptr))
 	{
 		Cast<UCharacterMovementComponent>(GetPawn()->GetMovementComponent())->MaxWalkSpeed = 375.f;
@@ -248,6 +284,10 @@ void ASlAiPlayerController::OnStartRun(const FInputActionValue& Value)
 
 void ASlAiPlayerController::OnStopRun(const FInputActionValue& Value)
 {
+	if (IsInputLocked)
+	{
+		return;
+	}
 	if ((GetPawn() != nullptr))
 	{
 		Cast<UCharacterMovementComponent>(GetPawn()->GetMovementComponent())->MaxWalkSpeed = 150.f;
@@ -277,6 +317,15 @@ void ASlAiPlayerController::LoadInputInteractiveMapping()
 
 	static ConstructorHelpers::FObjectFinder<UInputAction> Input_MouseScrollDown(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_MouseScrollDown.IA_MouseScrollDown'"));
 	IA_MouseScrollDown = Input_MouseScrollDown.Object;
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> Input_ECS(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_GameMenu.IA_GameMenu'"));
+	IA_ECS = Input_ECS.Object;
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> Input_Bag(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_Bag.IA_Bag'"));
+	IA_Bag = Input_Bag.Object;
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> Input_ChatRoom(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_Chat.IA_Chat'"));
+	IA_ChatRoom = Input_ChatRoom.Object;
 }
 
 void ASlAiPlayerController::RegisterInputInteractive()
@@ -309,11 +358,30 @@ void ASlAiPlayerController::RegisterInputInteractive()
 		{
 			EnhancedInputComponent->BindAction(IA_MouseScrollDown, ETriggerEvent::Started, this, &ASlAiPlayerController::OnMouseScrollDown);
 		}
+
+		if(IA_ECS)
+		{
+			EnhancedInputComponent->BindAction(IA_ECS, ETriggerEvent::Started, this, &ASlAiPlayerController::EscEvent);
+		}
+
+		if(IA_Bag)
+		{
+			EnhancedInputComponent->BindAction(IA_Bag, ETriggerEvent::Started, this, &ASlAiPlayerController::BagEvent);
+		}
+
+		if(IA_ChatRoom)
+		{
+			EnhancedInputComponent->BindAction(IA_ChatRoom, ETriggerEvent::Started, this, &ASlAiPlayerController::ChatRoomEvent);
+		}
 	}
 }
 
 void ASlAiPlayerController::OnChangeView(const FInputActionValue& Value)
 {
+	if (IsInputLocked)
+    {
+    	return;
+    }
 	if (!SPCharacter->IsAllowSwitchView)
 	{
 		return;
@@ -336,30 +404,50 @@ void ASlAiPlayerController::OnChangeView(const FInputActionValue& Value)
 
 void ASlAiPlayerController::OnLeftMouseClickStart(const FInputActionValue& Value)
 {
+	if (IsInputLocked)
+	{
+		return;
+	}
 	SPCharacter->UpperBodyAnim = LeftMouseClickAnim;
 	IsMouseLeftDown = true;
 }
 
 void ASlAiPlayerController::OnLeftMouseClickEnd(const FInputActionValue& Value)
 {
+	if (IsInputLocked)
+	{
+		return;
+	}
 	SPCharacter->UpperBodyAnim = EUpperBodyAnim::None;
 	IsMouseLeftDown = false;
 }
 
 void ASlAiPlayerController::OnRightMouseClickStart(const FInputActionValue& Value)
 {
+	if (IsInputLocked)
+	{
+		return;
+	}
 	SPCharacter->UpperBodyAnim = RightMouseClickAnim;
 	IsMouseRightDown = true;
 }
 
 void ASlAiPlayerController::OnRightMouseClickEnd(const FInputActionValue& Value)
 {
+	if (IsInputLocked)
+	{
+		return;
+	}
 	SPCharacter->UpperBodyAnim = EUpperBodyAnim::None;
 	IsMouseRightDown = false;
 }
 
 void ASlAiPlayerController::OnMouseScrollUp(const FInputActionValue& Value)
 {
+	if (IsInputLocked)
+	{
+		return;
+	}
 	if (!SPCharacter->IsAllowSwitchView)
 	{
 		return;
@@ -375,6 +463,10 @@ void ASlAiPlayerController::OnMouseScrollUp(const FInputActionValue& Value)
 
 void ASlAiPlayerController::OnMouseScrollDown(const FInputActionValue& Value)
 {
+	if (IsInputLocked)
+	{
+		return;
+	}
 	if (!SPCharacter->IsAllowSwitchView)
 	{
 		return;
@@ -386,6 +478,90 @@ void ASlAiPlayerController::OnMouseScrollDown(const FInputActionValue& Value)
     }
 	SPState->ChooseShortcut(false);
 	ChangeHandObject();
+}
+
+void ASlAiPlayerController::EscEvent(const FInputActionValue& Value)
+{
+	switch (CurrUIType)
+	{
+	case EGameUIType::Game:
+		//设置游戏暂停
+		SetPause(true);
+		//输入模式
+		SwitchInputMode(false);
+		//更新界面
+		ShowGameUI.ExecuteIfBound(CurrUIType,EGameUIType::Pause);
+		//更新当前UI
+		CurrUIType = EGameUIType::Pause;
+		//锁住输入
+		LockedInput(true);
+		break;
+	case EGameUIType::Pause:
+	case EGameUIType::Bag:
+	case EGameUIType::ChatRoom:
+		//解除暂停
+		SetPause(false);
+		//输入模式
+		SwitchInputMode(true);
+		//更新界面
+		ShowGameUI.ExecuteIfBound(CurrUIType,EGameUIType::Game);
+		//更新当前UI
+		CurrUIType = EGameUIType::Game;
+		//解开输入
+		LockedInput(false);
+		break;
+	}
+}
+
+void ASlAiPlayerController::BagEvent(const FInputActionValue& Value)
+{
+	switch (CurrUIType)
+	{
+	case EGameUIType::Game:
+		//输入模式
+		SwitchInputMode(false);
+		//更新界面
+		ShowGameUI.ExecuteIfBound(CurrUIType,EGameUIType::Bag);
+		//更新当前UI
+		CurrUIType = EGameUIType::Bag;
+		//锁住输入
+		LockedInput(true);
+		break;
+	case EGameUIType::Bag:
+		//输入模式
+		SwitchInputMode(true);
+		//更新界面
+		ShowGameUI.ExecuteIfBound(CurrUIType,EGameUIType::Game);
+		//更新当前UI
+		CurrUIType = EGameUIType::Game;
+		LockedInput(false);
+		break;
+	}
+}
+
+void ASlAiPlayerController::ChatRoomEvent(const FInputActionValue& Value)
+{
+	switch (CurrUIType)
+	{
+	case EGameUIType::Game:
+		//输入模式
+		SwitchInputMode(false);
+		//更新界面
+		ShowGameUI.ExecuteIfBound(CurrUIType,EGameUIType::ChatRoom);
+		//更新当前UI
+		CurrUIType = EGameUIType::ChatRoom;
+		LockedInput(true);
+		break;
+	case EGameUIType::ChatRoom:
+		//输入模式
+		SwitchInputMode(true);
+		//更新界面
+		ShowGameUI.ExecuteIfBound(CurrUIType,EGameUIType::Game);
+		//更新当前UI
+		CurrUIType = EGameUIType::Game;
+		LockedInput(false);
+		break;
+	}
 }
 
 
@@ -525,11 +701,41 @@ void ASlAiPlayerController::StateMechine()
 		//锁定模式
 		UpdatePointer.ExecuteIfBound(false,0.f);
 		//右键按下
-		if (IsMouseRightDown)
+		int ObjectIndex = Cast<ASlAiPickupObject>(RayActor)->ObjectIndex;
+		if (IsMouseRightDown && SPCharacter->IsBagFree(ObjectIndex))
 		{
-			int ObjectIndex = Cast<ASlAiPickupObject>(RayActor)->PickUp();
+			Cast<ASlAiPickupObject>(RayActor)->PickUp();
+			SPCharacter->AddObject(ObjectIndex);
 		}
 	}
+}
+
+void ASlAiPlayerController::SwitchInputMode(bool IsGameOnly)
+{
+	if (IsGameOnly)
+	{
+		//鼠标隐藏
+		bShowMouseCursor = false;
+		FInputModeGameOnly InputMode;
+		InputMode.SetConsumeCaptureMouseDown(true);
+		SetInputMode(InputMode);
+	}
+	else
+	{
+		//鼠标显示
+		bShowMouseCursor = true;
+		FInputModeGameAndUI InputMode;
+		//锁在屏幕里
+		InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::LockAlways);
+		//录制不隐藏
+		InputMode.SetHideCursorDuringCapture(false);
+		SetInputMode(InputMode);
+	}
+}
+
+void ASlAiPlayerController::LockedInput(bool IsLocked)
+{
+	IsInputLocked = IsLocked;
 }
 
 

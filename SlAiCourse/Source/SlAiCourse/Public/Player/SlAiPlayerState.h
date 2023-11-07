@@ -8,6 +8,7 @@
 #include "SlAiPlayerState.generated.h"
 
 
+class ASlAiPlayerController;
 DECLARE_DELEGATE_TwoParams(FUpdateStateWidget, float, float)
 
 /**
@@ -28,6 +29,8 @@ public:
 
 	//更新血量和饥饿
 	FUpdateStateWidget UpdateStateWidget;
+
+	ASlAiPlayerController* SPController;
 
 public:
 	ASlAiPlayerState();
@@ -53,6 +56,14 @@ public:
 
 	//获得伤害值
 	int GetDamageValue(EResourceType::Type ResourceType);
+
+	//更改快捷栏信息
+	void ChangeHandObject(int ShortcutID, int ObjectID, int ObjectNum);
+
+	void PromoteHungry();
+
+protected:
+	virtual void BeginPlay() override;
 	
 private:
 

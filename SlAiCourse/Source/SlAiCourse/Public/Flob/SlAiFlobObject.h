@@ -21,6 +21,8 @@ public:
 	//初始化
 	void CreateFlobObject(int ObjectId);
 
+	void ThrowFlobObject(int ObjectId,float DirYaw);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

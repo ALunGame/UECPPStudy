@@ -42,6 +42,9 @@ public:
 	//资源属性
 	TMap<int,TSharedPtr<ResourceAttribute>> ResourceAttrMap;
 
+	//合成表
+	TArray<TSharedPtr<CompoundTable>> CompoundTableMap;
+
 private:
 	
 	static TSharedRef<SlAiDataHandle> Create();
@@ -60,6 +63,8 @@ private:
 	void InitObjectAttr();
 
 	void InitResourceAttr();
+	
+	void InitCompoundTableMap();
 private:
 	static TSharedPtr<SlAiDataHandle> DataHandleInstance;
 

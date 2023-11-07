@@ -5,7 +5,10 @@
 
 #include "SlAiDataHandle.h"
 #include "SlAiHelper.h"
+#include "SlAiPlayerController.h"
 #include "SlAiTypes.h"
+#include "Kismet/GameplayStatics.h"
+#include "SlAiPlayerController.h"
 
 ASlAiPlayerState::ASlAiPlayerState()
 {
@@ -21,23 +24,12 @@ ASlAiPlayerState::ASlAiPlayerState()
 void ASlAiPlayerState::OnRegisterShortcutContainer(TArray<TSharedPtr<ShortcutContainer>>* Containers,
 	TSharedPtr<STextBlock> ShortcutInfoTextBlock)
 {
-	SlAiHelper::DebugError("ASlAiPlayerState::OnRegisterShortcutContainer",600.f);
 	for (TArray<TSharedPtr<ShortcutContainer>>::TIterator It(*Containers); It; ++It) {
 		ShortcutContainers.Add(*It);
 	}
 	//绑定属性
 	ShortcutInfoTextAttr.BindUObject(this,&ASlAiPlayerState::GetShortcutInfoText);
 	ShortcutInfoTextBlock->SetText(ShortcutInfoTextAttr);
-
-	//测试
-	SlAiHelper::DebugError("ShortcutContainers.Num: "+ShortcutContainers.Num(),600.f);
-	ShortcutContainers[1]->SetObject(1)->SetObjectNum(5);
-	ShortcutContainers[2]->SetObject(2)->SetObjectNum(15);
-	ShortcutContainers[3]->SetObject(3)->SetObjectNum(2);
-	ShortcutContainers[4]->SetObject(4)->SetObjectNum(4);
-	ShortcutContainers[5]->SetObject(5)->SetObjectNum(5);
-	ShortcutContainers[6]->SetObject(6)->SetObjectNum(7);
-	ShortcutContainers[7]->SetObject(7)->SetObjectNum(55);
 }
 
 void ASlAiPlayerState::Tick(float DeltaSeconds)
@@ -129,6 +121,29 @@ int ASlAiPlayerState::GetDamageValue(EResourceType::Type ResourceType)
 		return ObjectAttr->AnimalAttack;
 	}
 	return ObjectAttr->PlantAttack;
+}
+
+void ASlAiPlayerState::ChangeHandObject(int ShortcutID, int ObjectID, int ObjectNum)
+{
+	ShortcutContainers[ShortcutID]->SetObject(ObjectID)->SetObjectNum(ObjectNum);
+	SPController->ChangeHandObject();
+}
+
+void ASlAiPlayerState::PromoteHungry()
+{
+	if (Hunger + 100 >= 500.f)
+	{
+		Hunger = 600.f;
+		return;
+	}
+	Hunger = FMath::Clamp<float>(Hunger + 100.f,0,600.f);
+}
+
+void ASlAiPlayerState::BeginPlay()
+{
+	Super::BeginPlay();
+
+	SPController = Cast<ASlAiPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(),0));
 }
 
 FText ASlAiPlayerState::GetShortcutInfoText() const

@@ -6,6 +6,9 @@
 #include "GameFramework/GameModeBase.h"
 #include "SlAiGameMode.generated.h"
 
+//初始化背包管理
+DECLARE_DELEGATE(FInitBagManger)
+
 /**
  * 
  */
@@ -19,6 +22,8 @@ public:
 	class ASlAiPlayerController* SPController;
 	class ASlAiPlayerCharacter* SPCharacter;
 	class ASlAiPlayerState* SPState;
+
+	FInitBagManger InitBagManger;
 	
 public:
 	ASlAiGameMode();
@@ -30,5 +35,12 @@ public:
 	void InitGameplayMode();
 
 protected:
+	
 	void BeginPlay() override;
+
+	void InitBagManager();
+
+private:
+
+	bool IsInitBag;
 };

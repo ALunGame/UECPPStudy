@@ -273,6 +273,104 @@ struct ResourceAttribute
 			FlobObjectInfo.Add(FlobObjectInfoItem);
 		}
 	}
-
-
 };
+
+//界面类型
+namespace EGameUIType
+{
+	enum Type
+	{
+		Game,	//游戏UI
+		Pause,	//暂停
+		Lose,	//输了，死亡
+		Bag,	//背包
+		ChatRoom,	//聊天室
+	};
+}
+
+//背包容器类型
+namespace EContainerType
+{
+	enum Type
+	{
+		Output,			//合成表输出
+		Input,			//合成表输入
+		Normal,			//普通容器
+		Shortcut,		//快捷栏容器
+	};
+}
+
+//合成表结构
+struct CompoundTable
+{
+	//合成图
+	TArray<int> CompoundMap;
+
+	CompoundTable(TArray<int> *InsertMap) {
+		for (TArray<int>::TIterator It(*InsertMap); It; ++It) {
+			CompoundMap.Add(*It);
+		}
+	}
+
+	//获得符合表的输出和数量
+	void DetectTable(TArray<int>* IDMap, TArray<int>* NumMap, int& OutputID, int& OutputNum)
+	{
+		//输出
+		int TempID = CompoundMap[9];
+		int TempNum = 64;
+		for (int i = 0; i < 9; ++i)
+		{
+			if ((*IDMap)[i] == CompoundMap[i])
+			{
+				if ((*IDMap)[i] != 0) TempNum = (*NumMap)[i] < TempNum ? (*NumMap)[i] : TempNum;
+			}
+			else 
+			{
+				TempID = TempNum = 0;
+				break;
+			}
+		}
+		//输出
+		if (TempID != 0 && TempNum != 0) {
+			OutputID = TempID;
+			OutputNum = TempNum;
+		}
+	}
+
+	//检测合成，并返回消耗表
+	bool DetectExpend(TArray<int>* TableMap, int ProductNum, TArray<int>& ExpendMap)
+	{
+		//检测通过
+		bool IsMatch = true;
+		for (int i = 0; i < 10; ++i) {
+			if ((*TableMap)[i] != CompoundMap[i])
+			{
+				IsMatch = false;
+				break;
+			}
+		}
+		
+		//检测通过
+		if (IsMatch) {
+			for (int i = 0; i < 9; ++i) {
+				if (CompoundMap[i] != 0) {
+					ExpendMap.Add(ProductNum);
+				}
+				else {
+					ExpendMap.Add(0);
+				}
+			}
+		}
+		return IsMatch;
+	}
+
+	FString ToString()
+	{
+		FString OutputString("");
+		for (TArray<int>::TIterator It(CompoundMap); It; ++It) {
+			OutputString += FString::FromInt(*It) + "-";
+		}
+		return OutputString;
+	}
+};
+

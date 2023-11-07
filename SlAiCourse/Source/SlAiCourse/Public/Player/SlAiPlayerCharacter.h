@@ -70,6 +70,14 @@ public:
 	*/
 	void ChangeHandObjectRender(bool IsOpen);
 
+	void PlayerThrowObject(int ObjectID, int Num);
+
+	bool IsBagFree(int ObjectID);
+
+	void AddObject(int ObjectID);
+
+	void EatUpEvent();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

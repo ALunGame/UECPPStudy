@@ -32,6 +32,12 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, Category = "SlAi")
 		void RenderHandleObject(bool IsOpen);
+
+	/*
+	* 吃完东西调用
+	*/
+	UFUNCTION(BlueprintCallable, Category = "SlAi")
+		void EatupEvent();
 	
 public:
 

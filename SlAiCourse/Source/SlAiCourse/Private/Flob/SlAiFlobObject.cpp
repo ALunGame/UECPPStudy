@@ -68,7 +68,7 @@ void ASlAiFlobObject::BeginPlay()
 	//注册销毁事件 (10秒自动销毁)
 	FTimerDelegate DestroyDele;
 	DestroyDele.BindUObject(this,&ASlAiFlobObject::DestroyEvent);
-	GetWorld()->GetTimerManager().SetTimer(DestroyTime,DestroyDele,10.f,false);
+	GetWorld()->GetTimerManager().SetTimer(DestroyTime,DestroyDele,30.f,false);
 
 	SPCharacter = nullptr;
 }
@@ -102,8 +102,12 @@ void ASlAiFlobObject::DetectPlayer()
 			if (Cast<ASlAiPlayerCharacter>(It->GetActor()))
 			{
 				SPCharacter = Cast<ASlAiPlayerCharacter>(It->GetActor());
-				if (true)
+				//判断背包
+				if (SPCharacter->IsBagFree(ObjectIndex))
 				{
+					//添加物品到背包
+					SPCharacter->AddObject(ObjectIndex);
+					
 					//停止检测
 					GetWorld()->GetTimerManager().PauseTimer(DetectTime);
 					GetWorld()->GetTimerManager().PauseTimer(DestroyTime);
@@ -149,9 +153,10 @@ void ASlAiFlobObject::Tick(float DeltaTime)
 		if (FVector::Distance(GetActorLocation(),SPCharacter->GetActorLocation()+FVector(0.f,0.f,40.f))< 10.f)
 		{
 			//判断背包
-			if (true)
+			if (SPCharacter->IsBagFree(ObjectIndex))
 			{
 				//添加物品到背包
+				SPCharacter->AddObject(ObjectIndex);
 				//销毁自己
 				DestroyEvent();
 			}
@@ -184,5 +189,23 @@ void ASlAiFlobObject::CreateFlobObject(int ObjectId)
 
 	//添加力
 	BoxCollision->AddForce((FVector(0.f,0.f,4.f)+ForceRot.Vector())*100000.f);
+}
+
+void ASlAiFlobObject::ThrowFlobObject(int ObjectId, float DirYaw)
+{
+	ObjectIndex = ObjectId;
+
+	//渲染贴图
+	RenderTexture();
+
+	//做随机方向的力
+	FRandomStream Stream;
+	Stream.GenerateNewSeed();
+	DirYaw += Stream.RandRange(-30,30);
+
+	FRotator ForceRot = FRotator(0.f,DirYaw,0.f);
+
+	//添加力
+	BoxCollision->AddForce((FVector(0.f,0.f,2.f)+ForceRot.Vector())*120000.f);
 }
 

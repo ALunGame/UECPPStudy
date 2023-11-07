@@ -12,6 +12,7 @@
 class ASlAiPlayerState;
 
 DECLARE_DELEGATE_TwoParams(FUpdatePointer,bool,float)
+DECLARE_DELEGATE_TwoParams(FShowGameUI,EGameUIType::Type,EGameUIType::Type)
 /**
  * 
  */
@@ -63,6 +64,12 @@ public:
 	//射线检测到的实体
 	AActor* RayActor;
 
+	//实时修改准星委托
+	FShowGameUI ShowGameUI;
+
+	//锁住输入
+	bool IsInputLocked;
+
 #pragma region 移动输入映射
 	
 	UPROPERTY(VisibleDefaultsOnly, Category="Input_Move")
@@ -110,6 +117,15 @@ public:
 
 	UPROPERTY(VisibleDefaultsOnly, Category="Input_Interactive|Action")
 	UInputAction* IA_MouseScrollDown;
+
+	UPROPERTY(VisibleDefaultsOnly, Category="Input_Interactive|Action")
+	UInputAction* IA_ECS;
+
+	UPROPERTY(VisibleDefaultsOnly, Category="Input_Interactive|Action")
+	UInputAction* IA_Bag;
+
+	UPROPERTY(VisibleDefaultsOnly, Category="Input_Interactive|Action")
+	UInputAction* IA_ChatRoom;
 	
 #pragma endregion
 
@@ -137,6 +153,9 @@ private:
 
 	//旋转左右视角速率
 	float BaseTurnRate;
+
+	//保存当前UI
+	EGameUIType::Type CurrUIType;
 
 private:
 
@@ -201,6 +220,12 @@ private:
 
 	//开始鼠标向下滚动
 	void OnMouseScrollDown(const FInputActionValue& Value);
+
+	void EscEvent(const FInputActionValue& Value);
+
+	void BagEvent(const FInputActionValue& Value);
+
+	void ChatRoomEvent(const FInputActionValue& Value);
 	
 #pragma endregion
 
@@ -218,5 +243,10 @@ private:
 
 	//行为状态机
 	void StateMechine();
-	
+
+	//切换输入模式
+	void SwitchInputMode(bool IsGameOnly);
+
+	//锁住输入
+	void LockedInput(bool IsLocked);
 };

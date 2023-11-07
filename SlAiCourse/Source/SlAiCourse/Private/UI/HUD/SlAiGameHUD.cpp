@@ -9,6 +9,7 @@
 #include "SlAiPointerWidget.h"
 #include "SlAiShortcutWidget.h"
 #include "SWeakWidget.h"
+#include "Bag/SlAiBagWidget.h"
 #include "Interactive/SlAiRayInfoWidget.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/SlAiPlayerStateWidget.h"
@@ -45,4 +46,10 @@ void ASlAiGameHUD::BeginPlay()
 
 	//绑定修改状态
 	GameMode->SPState->UpdateStateWidget.BindRaw(GameHUDWidget->PlayerStateWidget.Get(),&SlAiPlayerStateWidget::UpdateStateWidget);
+
+	//绑定显示UI
+	GameMode->SPController->ShowGameUI.BindRaw(GameHUDWidget.Get(),&SlAiGameHUDWidget::ShowGameUI);
+
+	//背包管理委托
+	GameMode->InitBagManger.BindRaw(GameHUDWidget->BagWidget.Get(),&SlAiBagWidget::InitBagManger);
 }

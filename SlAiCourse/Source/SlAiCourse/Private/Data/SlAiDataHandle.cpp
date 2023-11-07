@@ -112,6 +112,11 @@ void SlAiDataHandle::InitResourceAttr()
 	SlAiSingleton<SlAiJsonHandle>::Get()->ResourceAttrJsonRead(ResourceAttrMap);
 }
 
+void SlAiDataHandle::InitCompoundTableMap()
+{
+	SlAiSingleton<SlAiJsonHandle>::Get()->CompoundTableJsonRead(CompoundTableMap);
+}
+
 void SlAiDataHandle::ChangeLocalizationCulture(ECultureTeam newCulture)
 {
 	switch (newCulture)
@@ -155,6 +160,7 @@ void SlAiDataHandle::InitGameData()
 {
 	InitObjectAttr();
 	InitResourceAttr();
+	InitCompoundTableMap();
 }
 
 SlAiDataHandle::SlAiDataHandle()
