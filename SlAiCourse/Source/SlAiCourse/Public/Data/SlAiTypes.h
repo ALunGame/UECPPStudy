@@ -374,3 +374,16 @@ struct CompoundTable
 	}
 };
 
+UENUM(BlueprintType)
+enum class EEnemyAIState : uint8
+{
+	ES_Patrol    UMETA(DisplayName = "巡逻"),//巡逻
+	ES_Chase     UMETA(DisplayName = "追赶"),//追赶
+	ES_Escape    UMETA(DisplayName = "逃跑"),//逃跑
+	ES_Attack    UMETA(DisplayName = "攻击"),//攻击
+	ES_Hurt      UMETA(DisplayName = "受伤"),//受伤
+	ES_Defence   UMETA(DisplayName = "防御"),//防御
+	ES_Dead      UMETA(DisplayName = "死亡"),//死亡
+	
+};
+

@@ -16,9 +16,6 @@
 // Sets default values
 ASlAiHandObject::ASlAiHandObject()
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
 	//实例化根组件
 	RootScene = CreateDefaultSubobject<USceneComponent>(TEXT("RootScene"));
 	RootComponent = RootScene;
@@ -46,13 +43,6 @@ ASlAiHandObject::ASlAiHandObject()
 	AffectCollision->OnComponentEndOverlap.Add(OverlayEnd);
 }
 
-// Called when the game starts or when spawned
-void ASlAiHandObject::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
 void ASlAiHandObject::OnOverlayBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
@@ -61,12 +51,6 @@ void ASlAiHandObject::OnOverlayBegin(UPrimitiveComponent* OverlappedComponent, A
 void ASlAiHandObject::OnOverlayEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-}
-
-// Called every frame
-void ASlAiHandObject::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
 }
 
 void ASlAiHandObject::ChangeOverlayDetect(bool IsOpen)

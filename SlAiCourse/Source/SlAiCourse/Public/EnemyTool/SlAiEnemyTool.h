@@ -4,32 +4,28 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "SlAiHandObject.generated.h"
+#include "SlAiEnemyTool.generated.h"
 
 UCLASS()
-class SLAICOURSE_API ASlAiHandObject : public AActor
+class SLAICOURSE_API ASlAiEnemyTool : public AActor
 {
 	GENERATED_BODY()
 
 public:
-
-	/*
-	 * 物品Id
-	 */
-	int ObjectIndex;
-	
-public:
 	// Sets default values for this actor's properties
-	ASlAiHandObject();
+	ASlAiEnemyTool();
 
 	//开启碰撞检测
 	void ChangeOverlayDetect(bool IsOpen);
 
-	//创建物品
-	static TSubclassOf<AActor> SpawnHandObject(int ObjectIndex);
+	//创建武器
+	static TSubclassOf<AActor> SpawnEnemyWeapon();
+
+	//创建武器
+	static TSubclassOf<AActor> SpawnEnemySheild();
 	
 protected:
-
+	
 	//碰撞开始
 	UFUNCTION()
 	virtual void OnOverlayBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
@@ -45,9 +41,9 @@ protected:
 
 	//静态模型
 	UPROPERTY(EditAnywhere,Category="SlAi")
-		class UStaticMeshComponent* BaseMesh;
+	class UStaticMeshComponent* BaseMesh;
 
 	//盒子碰撞盒
 	UPROPERTY(EditAnywhere,Category="SlAi")
-		class UBoxComponent* AffectCollision;
+	class UBoxComponent* AffectCollision;
 };

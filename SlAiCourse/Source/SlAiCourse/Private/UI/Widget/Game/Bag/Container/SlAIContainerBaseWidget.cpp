@@ -1,10 +1,8 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-
+#include "Bag/Container/SlAIContainerBaseWidget.h"
 #include "SlAiGameWidgetStyle.h"
 #include "SlAiStyle.h"
-#include "Bag/Container/SlAIContainerBaseWidget.h"
-
 #include "SlAiDataHandle.h"
 #include "SlateOptMacros.h"
 #include "Bag/Container/SlAiContainerInputWidget.h"

@@ -606,10 +606,10 @@ FHitResult ASlAiPlayerController::RayGetHitResult(FVector TraceStart, FVector Tr
 	TraceParams.bTraceComplex = true;
 
 	FHitResult Hit(ForceInit);
-	if (GetWorld()->LineTraceSingleByChannel(Hit,TraceStart,TraceEnd,ECollisionChannel::ECC_GameTraceChannel1,TraceParams))
-	{
-		DrawRayLine(TraceStart,TraceEnd,5.f);
-	}
+	// if (GetWorld()->LineTraceSingleByChannel(Hit,TraceStart,TraceEnd,ECollisionChannel::ECC_GameTraceChannel1,TraceParams))
+	// {
+	// 	DrawRayLine(TraceStart,TraceEnd,5.f);
+	// }
 	return Hit;
 }
 

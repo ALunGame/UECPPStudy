@@ -19,6 +19,10 @@ public class SlAiCourse : ModuleRules
 			"Json",
 			"JsonUtilities", 
 			"EnhancedInput",
+			"AIModule",
+			"UMG",
+			"GameplayTasks",
+			"NavigationSystem",
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] { });
