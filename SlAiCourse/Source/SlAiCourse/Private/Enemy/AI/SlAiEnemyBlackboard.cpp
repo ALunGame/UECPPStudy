@@ -3,8 +3,11 @@
 
 #include "AI/SlAiEnemyBlackboard.h"
 
+#include "SlAiPlayerCharacter.h"
+#include "BehaviorTree/Blackboard/BlackboardKeyType_Bool.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Enum.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Float.h"
+#include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
 
 void USlAiEnemyBlackboard::PostLoad()
@@ -33,4 +36,27 @@ void USlAiEnemyBlackboard::PostLoad()
 	WaitTime.EntryName = FName("WaitTime");
 	WaitTime.KeyType = NewObject<UBlackboardKeyType_Float>();
 	Keys.Add(WaitTime);
+
+	//攻击类型
+	FBlackboardEntry AttackType;
+	AttackType.EntryName = FName("AttackType");
+	UBlackboardKeyType_Enum* EnemyAttackKeyType = NewObject<UBlackboardKeyType_Enum>();
+	EnemyAttackKeyType->EnumType = FindObject<UEnum>(ANY_PACKAGE,*FString("EEnemyAttackType"),true);
+	EnemyAttackKeyType->EnumName = FString("EEnemyAttackType");
+	AttackType.KeyType = EnemyAttackKeyType;
+	Keys.Add(AttackType);
+
+	//玩家指针
+	FBlackboardEntry PlayerPawn;
+	PlayerPawn.EntryName = FName("PlayerPawn");
+	UBlackboardKeyType_Object* PlayerPawnKeyType = NewObject<UBlackboardKeyType_Object>();
+	PlayerPawnKeyType->BaseClass = ASlAiPlayerCharacter::StaticClass();
+	PlayerPawn.KeyType = PlayerPawnKeyType;
+	Keys.Add(PlayerPawn);
+
+	//动作是否完成
+	FBlackboardEntry ProcessFinish;
+	ProcessFinish.EntryName = FName("ProcessFinish");
+	ProcessFinish.KeyType = NewObject<UBlackboardKeyType_Bool>();
+	Keys.Add(ProcessFinish);
 }

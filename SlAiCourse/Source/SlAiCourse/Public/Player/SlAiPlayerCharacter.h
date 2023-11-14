@@ -78,6 +78,9 @@ public:
 
 	void EatUpEvent();
 
+	//是否死亡
+	bool IsPlayerDead();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

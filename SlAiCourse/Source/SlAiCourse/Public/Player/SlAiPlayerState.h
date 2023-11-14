@@ -60,7 +60,11 @@ public:
 	//更改快捷栏信息
 	void ChangeHandObject(int ShortcutID, int ObjectID, int ObjectNum);
 
+	//提升饥饿值
 	void PromoteHungry();
+
+	//是否死亡
+	bool IsPlayerDead();
 
 protected:
 	virtual void BeginPlay() override;

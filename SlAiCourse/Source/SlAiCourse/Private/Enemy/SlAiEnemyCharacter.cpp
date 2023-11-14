@@ -63,6 +63,7 @@ void ASlAiEnemyCharacter::BeginPlay()
 
 	//获取动画
 	SEAnim = Cast<USlAiEnemyAnim>(GetMesh()->GetAnimInstance());
+	SEController = Cast<ASlAiEnemyController>(GetController());
 
 	//绑定插槽
 	WeaponSocket->AttachToComponent(GetMesh(),FAttachmentTransformRules::SnapToTargetNotIncludingScale,FName("RHSocket"));
@@ -99,6 +100,10 @@ void ASlAiEnemyCharacter::OnSeePlayer(APawn* PlayerChar)
 	if (Cast<ASlAiPlayerCharacter>(PlayerChar))
 	{
 		SlAiHelper::Debug("Enemy See Player",3.f);
+		if (SEController)
+		{
+			SEController->OnSeePlayer();
+		}
 	}
 }
 
@@ -106,6 +111,16 @@ void ASlAiEnemyCharacter::OnSeePlayer(APawn* PlayerChar)
 void ASlAiEnemyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	//插值更新朝向
+	if (NeedRotate)
+	{
+		SetActorRotation(FMath::RInterpTo(GetActorRotation(),NextRotation,DeltaTime,10.f));
+		if (FMath::Abs(GetActorRotation().Yaw - NextRotation.Yaw)< 5)
+		{
+			NeedRotate = false;
+		}
+	}
 }
 
 // Called to bind functionality to input
@@ -140,7 +155,47 @@ float ASlAiEnemyCharacter::GetIdleWaitTime()
 	float AnimLength = SEAnim->SetIdleType(IdleType);
 	Stream.GenerateNewSeed();
 
-	int AnimCnt = Stream.RandRange(1,4);
+	int AnimCnt = Stream.RandRange(1,3);
 	return AnimCnt * AnimLength;
+}
+
+float ASlAiEnemyCharacter::PlayAttackAction(EEnemyAttackType AttackType)
+{
+	if (!SEAnim)
+	{
+		return 0.f;
+	}
+
+	return SEAnim->PlayAttackAction(AttackType);
+}
+
+void ASlAiEnemyCharacter::UpdateRotation(FRotator NewRotator)
+{
+	NextRotation = NewRotator;
+	NeedRotate = true;
+}
+
+void ASlAiEnemyCharacter::AcceptDamage(int DamageValue)
+{
+	HP = FMath::Clamp<float>(HP - DamageValue, 0.f, 200.f);
+	HPBarWidget->ChangeHP(HP / 200.f);
+	if (HP == 0.f)
+	{
+		
+	}
+	else
+	{
+		if (SEController) SEController->UpdateDamageRatio(HP / 200.f);
+	}
+}
+
+float ASlAiEnemyCharacter::PlayHurtAction()
+{
+	if (!SEAnim)
+	{
+		return 0.f;
+	}
+
+	return SEAnim->PlayHurtAction();
 }
 

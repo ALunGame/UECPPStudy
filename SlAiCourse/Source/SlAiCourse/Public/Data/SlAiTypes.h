@@ -384,6 +384,13 @@ enum class EEnemyAIState : uint8
 	ES_Hurt      UMETA(DisplayName = "受伤"),//受伤
 	ES_Defence   UMETA(DisplayName = "防御"),//防御
 	ES_Dead      UMETA(DisplayName = "死亡"),//死亡
-	
+};
+
+UENUM(BlueprintType)
+enum class EEnemyAttackType : uint8
+{
+	EA_Normal    UMETA(DisplayName = "普攻"),//普攻
+	EA_Dash    UMETA(DisplayName = "Dash"),
+	EA_Pursuit    UMETA(DisplayName = "Pursuit"),
 };
 

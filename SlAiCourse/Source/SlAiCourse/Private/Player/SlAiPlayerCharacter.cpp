@@ -220,4 +220,13 @@ void ASlAiPlayerCharacter::EatUpEvent()
 	}
 }
 
+bool ASlAiPlayerCharacter::IsPlayerDead()
+{
+	if (!MineController->SPState)
+	{
+		return false;
+	}
+	return MineController->SPState->IsPlayerDead();
+}
+
 

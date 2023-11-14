@@ -2,6 +2,9 @@
 
 
 #include "Hand/SlAiHandObject.h"
+
+#include "SlAiDataHandle.h"
+#include "SlAiEnemyCharacter.h"
 #include "Components/BoxComponent.h"
 #include "Hand/SlAiHandApple.h"
 #include "Hand/SlAiHandAxe.h"
@@ -46,6 +49,11 @@ ASlAiHandObject::ASlAiHandObject()
 void ASlAiHandObject::OnOverlayBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if (Cast<ASlAiEnemyCharacter>(OtherActor))
+	{
+		TSharedPtr<ObjectAttr> ObjectAttr = *SlAiDataHandle::Get()->ObjectAttrMap.Find(ObjectIndex);
+		Cast<ASlAiEnemyCharacter>(OtherActor)->AcceptDamage(ObjectAttr->AnimalAttack);
+	}
 }
 
 void ASlAiHandObject::OnOverlayEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SlAiTypes.h"
 #include "GameFramework/Character.h"
 #include "SlAiEnemyCharacter.generated.h"
 
@@ -29,6 +30,17 @@ public:
 
 	//获取等待时常
 	float GetIdleWaitTime();
+
+	//攻击动画
+	float PlayAttackAction(EEnemyAttackType AttackType);
+
+	void UpdateRotation(FRotator NewRotator);
+
+	//接受攻击。也可以重写，TakeDamage
+	void AcceptDamage(int DamageValue);
+
+	//播放受伤动画
+	float PlayHurtAction();
 
 protected:
 	// Called when the game starts or when spawned
@@ -63,6 +75,9 @@ private:
 	float HP;
 
 	class USlAiEnemyAnim* SEAnim;
+
+	FRotator NextRotation;
+	bool NeedRotate;
 
 private:
 
