@@ -50,6 +50,12 @@ public:
 	//完成受伤状态
 	void FinishStateHurt();
 
+	//完成防御状态
+	void FinishStateDefence();
+
+	//死亡
+	void EnemyDead();
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

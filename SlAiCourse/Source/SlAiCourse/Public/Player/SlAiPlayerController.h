@@ -13,6 +13,8 @@ class ASlAiPlayerState;
 
 DECLARE_DELEGATE_TwoParams(FUpdatePointer,bool,float)
 DECLARE_DELEGATE_TwoParams(FShowGameUI,EGameUIType::Type,EGameUIType::Type)
+DECLARE_DELEGATE_OneParam(FUpdateMiniMapWidth,int)
+
 /**
  * 
  */
@@ -64,11 +66,14 @@ public:
 	//射线检测到的实体
 	AActor* RayActor;
 
-	//实时修改准星委托
+	//
 	FShowGameUI ShowGameUI;
 
 	//锁住输入
 	bool IsInputLocked;
+
+	//更改小地图大小委托
+	FUpdateMiniMapWidth UpdateMiniMapWidth;
 
 #pragma region 移动输入映射
 	
@@ -126,6 +131,12 @@ public:
 
 	UPROPERTY(VisibleDefaultsOnly, Category="Input_Interactive|Action")
 	UInputAction* IA_ChatRoom;
+
+	UPROPERTY(VisibleDefaultsOnly, Category="Input_Interactive|Action")
+	UInputAction* IA_AddMapSize;
+
+	UPROPERTY(VisibleDefaultsOnly, Category="Input_Interactive|Action")
+	UInputAction* IA_ReduceMapSize;
 	
 #pragma endregion
 
@@ -156,6 +167,9 @@ private:
 
 	//保存当前UI
 	EGameUIType::Type CurrUIType;
+
+	//缩放状态
+	EMiniMapSizeMode::Type MiniMapSizeMode;
 
 private:
 
@@ -226,6 +240,16 @@ private:
 	void BagEvent(const FInputActionValue& Value);
 
 	void ChatRoomEvent(const FInputActionValue& Value);
+
+	void AddMapSizeStart(const FInputActionValue& Value);
+
+	void AddMapSizeEnd(const FInputActionValue& Value);
+
+	void ReduceMapSizeStart(const FInputActionValue& Value);
+	
+	void ReduceMapSizeEnd(const FInputActionValue& Value);
+	
+	void TickMiniMap();
 	
 #pragma endregion
 

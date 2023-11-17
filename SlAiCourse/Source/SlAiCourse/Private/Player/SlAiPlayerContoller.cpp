@@ -14,6 +14,7 @@
 #include "GameFramework/PawnMovementComponent.h"
 #include "Hand/SlAiHandObject.h"
 #include "CollisionQueryParams.h"
+#include "SlAiEnemyCharacter.h"
 #include "SlAiPickupObject.h"
 #include "SlAiResourceObject.h"
 #include "Camera/CameraComponent.h"
@@ -77,6 +78,9 @@ void ASlAiPlayerController::Tick(float DeltaSeconds)
 
 	//动作
 	StateMechine();
+
+	//更新小地图
+	TickMiniMap();
 }
 
 void ASlAiPlayerController::ChangeHandObject()
@@ -326,6 +330,13 @@ void ASlAiPlayerController::LoadInputInteractiveMapping()
 
 	static ConstructorHelpers::FObjectFinder<UInputAction> Input_ChatRoom(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_Chat.IA_Chat'"));
 	IA_ChatRoom = Input_ChatRoom.Object;
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> Input_ReduceMapSize(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_ReduceMapSize.IA_ReduceMapSize'"));
+	IA_ReduceMapSize = Input_ReduceMapSize.Object;
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> Input_AddMapSize(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_AddMapSize.IA_AddMapSize'"));
+	IA_AddMapSize = Input_AddMapSize.Object;
+	
 }
 
 void ASlAiPlayerController::RegisterInputInteractive()
@@ -372,6 +383,18 @@ void ASlAiPlayerController::RegisterInputInteractive()
 		if(IA_ChatRoom)
 		{
 			EnhancedInputComponent->BindAction(IA_ChatRoom, ETriggerEvent::Started, this, &ASlAiPlayerController::ChatRoomEvent);
+		}
+
+		if(IA_AddMapSize)
+		{
+			EnhancedInputComponent->BindAction(IA_AddMapSize, ETriggerEvent::Started, this, &ASlAiPlayerController::AddMapSizeStart);
+			EnhancedInputComponent->BindAction(IA_AddMapSize, ETriggerEvent::Completed, this, &ASlAiPlayerController::AddMapSizeEnd);
+		}
+
+		if(IA_ReduceMapSize)
+		{
+			EnhancedInputComponent->BindAction(IA_ReduceMapSize, ETriggerEvent::Started, this, &ASlAiPlayerController::ReduceMapSizeStart);
+			EnhancedInputComponent->BindAction(IA_ReduceMapSize, ETriggerEvent::Completed, this, &ASlAiPlayerController::ReduceMapSizeEnd);
 		}
 	}
 }
@@ -564,6 +587,61 @@ void ASlAiPlayerController::ChatRoomEvent(const FInputActionValue& Value)
 	}
 }
 
+void ASlAiPlayerController::AddMapSizeStart(const FInputActionValue& Value)
+{
+	if (IsInputLocked)
+	{
+		return;
+	}
+	
+	MiniMapSizeMode = EMiniMapSizeMode::Add;
+}
+
+void ASlAiPlayerController::AddMapSizeEnd(const FInputActionValue& Value)
+{
+	if (IsInputLocked)
+	{
+		return;
+	}
+
+	MiniMapSizeMode = EMiniMapSizeMode::None;
+}
+
+void ASlAiPlayerController::ReduceMapSizeStart(const FInputActionValue& Value)
+{
+	if (IsInputLocked)
+	{
+		return;
+	}
+
+	MiniMapSizeMode = EMiniMapSizeMode::Reduce;
+}
+
+void ASlAiPlayerController::ReduceMapSizeEnd(const FInputActionValue& Value)
+{
+	if (IsInputLocked)
+	{
+		return;
+	}
+
+	MiniMapSizeMode = EMiniMapSizeMode::None;
+}
+
+void ASlAiPlayerController::TickMiniMap()
+{
+	switch (MiniMapSizeMode)
+	{
+	case EMiniMapSizeMode::None:
+		break;
+	case EMiniMapSizeMode::Add:
+		UpdateMiniMapWidth.ExecuteIfBound(5);
+		break;
+	case EMiniMapSizeMode::Reduce:
+		UpdateMiniMapWidth.ExecuteIfBound(-5);
+		break;
+	default: ;
+	}
+}
 
 #pragma endregion
 
@@ -606,10 +684,10 @@ FHitResult ASlAiPlayerController::RayGetHitResult(FVector TraceStart, FVector Tr
 	TraceParams.bTraceComplex = true;
 
 	FHitResult Hit(ForceInit);
-	// if (GetWorld()->LineTraceSingleByChannel(Hit,TraceStart,TraceEnd,ECollisionChannel::ECC_GameTraceChannel1,TraceParams))
-	// {
-	// 	DrawRayLine(TraceStart,TraceEnd,5.f);
-	// }
+	if (GetWorld()->LineTraceSingleByChannel(Hit,TraceStart,TraceEnd,ECollisionChannel::ECC_GameTraceChannel1,TraceParams))
+	{
+		//DrawRayLine(TraceStart,TraceEnd,5.f);
+	}
 	return Hit;
 }
 
@@ -657,6 +735,12 @@ void ASlAiPlayerController::RunRayCast()
 		SPState->RayInfoText = Cast<ASlAiResourceObject>(RayActor)->GetInfoText();
 	}
 
+	if (Cast<ASlAiEnemyCharacter>(RayActor))
+	{
+		IsDetected = true;
+		SPState->RayInfoText = Cast<ASlAiEnemyCharacter>(RayActor)->GetInfoText();
+	}
+
 	if (!IsDetected)
 	{
 		SPState->RayInfoText = FText();
@@ -668,10 +752,16 @@ void ASlAiPlayerController::StateMechine()
 	ChangePreUpperType(EUpperBodyAnim::None);
 
 	//未锁定
-	if (!Cast<ASlAiPickupObject>(RayActor) && !Cast<ASlAiResourceObject>(RayActor))
+	if (!Cast<ASlAiPickupObject>(RayActor) && !Cast<ASlAiResourceObject>(RayActor) && !Cast<ASlAiEnemyCharacter>(RayActor))
 	{
 		UpdatePointer.ExecuteIfBound(false,1.f);
 		return;
+	}
+
+	//敌人
+	if (Cast<ASlAiEnemyCharacter>(RayActor))
+	{
+		UpdatePointer.ExecuteIfBound(false,0.f);
 	}
 
 	//资源

@@ -66,6 +66,9 @@ public:
 	//是否死亡
 	bool IsPlayerDead();
 
+	//接受伤害
+	void AcceptDamage(int DamageVal);
+
 protected:
 	virtual void BeginPlay() override;
 	
@@ -82,6 +85,9 @@ private:
 	//血量和饥饿
 	float HP;
 	float Hunger;
+
+	//是否死亡
+	bool IsDead;
 
 private:
 

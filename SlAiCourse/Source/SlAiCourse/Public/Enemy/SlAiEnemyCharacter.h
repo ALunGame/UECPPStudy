@@ -13,6 +13,11 @@ class SLAICOURSE_API ASlAiEnemyCharacter : public ACharacter
 	GENERATED_BODY()
 
 public:
+
+	//资源iD
+	int ResourceIndex;
+
+public:
 	// Sets default values for this character's properties
 	ASlAiEnemyCharacter();
 	
@@ -34,18 +39,32 @@ public:
 	//攻击动画
 	float PlayAttackAction(EEnemyAttackType AttackType);
 
-	void UpdateRotation(FRotator NewRotator);
-
 	//接受攻击。也可以重写，TakeDamage
 	void AcceptDamage(int DamageValue);
 
 	//播放受伤动画
 	float PlayHurtAction();
+	
+	//开始防御
+	void StartDefence();
 
+	//开始防御
+	void StopDefence();
+
+	void DestroyEvent();
+
+	FText GetInfoText() const;
+
+	void ChangeWeaponDetect(bool IsOpen);
+
+	bool IsLockPlayer();
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	void CreateFlobObjects();
+	
 protected:
 
 	//武器插槽
@@ -76,9 +95,12 @@ private:
 
 	class USlAiEnemyAnim* SEAnim;
 
-	FRotator NextRotation;
-	bool NeedRotate;
+	//死亡动画资源
+	UAnimationAsset* AnimDead_I;
+	UAnimationAsset* AnimDead_II;
 
+	//死亡销毁时间
+	FTimerHandle DeadHandle;
 private:
 
 	UFUNCTION()

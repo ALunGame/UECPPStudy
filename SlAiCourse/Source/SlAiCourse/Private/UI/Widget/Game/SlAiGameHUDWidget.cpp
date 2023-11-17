@@ -4,6 +4,8 @@
 #include "SlAiGameHUDWidget.h"
 
 #include "SDPIScaler.h"
+#include "SlAiChatShowWidget.h"
+#include "SlAiMinMapWidget.h"
 #include "SlAiPointerWidget.h"
 #include "SlAiShortcutWidget.h"
 #include "SlAiStyle.h"
@@ -56,6 +58,21 @@ void SlAiGameHUDWidget::Construct(const FArguments& InArgs)
 			.VAlign(VAlign_Top)
 			[
 				SAssignNew(PlayerStateWidget,SlAiPlayerStateWidget)
+			]
+
+			+SOverlay::Slot()
+			.HAlign(HAlign_Right)
+			.VAlign(VAlign_Top)
+			[
+				SAssignNew(MinMapWidget,SlAiMinMapWidget)
+			]
+
+			+SOverlay::Slot()
+			.HAlign(HAlign_Left)
+			.VAlign(VAlign_Bottom)
+			.Padding(FMargin(20.f,0.f,0.f,15.f))
+			[
+				SAssignNew(ChatShowWidget,SlAiChatShowWidget)
 			]
 
 			//暗黑色遮罩
@@ -127,6 +144,19 @@ void SlAiGameHUDWidget::ShowGameUI(EGameUIType::Type PreUI, EGameUIType::Type Ne
 	{
 		//隐藏当前的
 		UIMap.Find(NextUI)->Get()->SetVisibility(EVisibility::Visible);
+		//聊天室
+		if (NextUI == EGameUIType::ChatRoom)
+		{
+			ChatRoomWidget->ScrollToEnd();
+		}
+		if (NextUI == EGameUIType::Lose)
+		{
+			GameMenuWidget->GameLose();
+		}
+		if (NextUI == EGameUIType::Pause)
+		{
+			GameMenuWidget->ResetMenu();
+		}
 	}
 }
 
@@ -136,6 +166,9 @@ void SlAiGameHUDWidget::InitUIMap()
 	UIMap.Add(EGameUIType::Bag,BagWidget);
 	UIMap.Add(EGameUIType::ChatRoom,ChatRoomWidget);
 	UIMap.Add(EGameUIType::Lose,GameMenuWidget);
+
+	//委托
+	ChatRoomWidget->PushMessage.BindRaw(ChatShowWidget.Get(),&SlAiChatShowWidget::AddMessage);
 }
 
 float SlAiGameHUDWidget::GetUIScaler() const

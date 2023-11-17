@@ -4,6 +4,7 @@
 #include "SlAiGameHUD.h"
 
 #include "SlAiGameHUDWidget.h"
+#include "SlAiMinMapWidget.h"
 #include "SlAiPlayerController.h"
 #include "SlAiPlayerState.h"
 #include "SlAiPointerWidget.h"
@@ -52,4 +53,10 @@ void ASlAiGameHUD::BeginPlay()
 
 	//背包管理委托
 	GameMode->InitBagManger.BindRaw(GameHUDWidget->BagWidget.Get(),&SlAiBagWidget::InitBagManger);
+
+	//小地图委托
+	GameMode->RegisterMiniMap.BindRaw(GameHUDWidget->MinMapWidget.Get(),&SlAiMinMapWidget::RegisterMiniMap);
+
+	//小地图信息更新
+	GameMode->UpdateMapData.BindRaw(GameHUDWidget->MinMapWidget.Get(),&SlAiMinMapWidget::UpdateMapData);
 }

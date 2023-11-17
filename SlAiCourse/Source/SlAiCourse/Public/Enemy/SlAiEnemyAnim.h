@@ -26,6 +26,13 @@ public:
 
 	//播放受伤动画
 	float PlayHurtAction();
+
+	//停止所有动作
+	void StopAllAction();
+
+	//开启和关闭交互检测
+	UFUNCTION(BlueprintCallable, Category = EnemyAnim)
+	void ChangeDetection(bool IsOpen);	
 	
 public:
 
@@ -40,6 +47,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = EnemyAnim)
 		float RootBoneAlpha;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = EnemyAnim)
+		bool IsDefence;
 	
 protected:
 

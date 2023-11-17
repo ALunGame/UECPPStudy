@@ -8,6 +8,10 @@
 
 //初始化背包管理
 DECLARE_DELEGATE(FInitBagManger)
+//注册小地图贴图
+DECLARE_DELEGATE_OneParam(FRegisterMiniMap, class UTextureRenderTarget2D*)
+//更新小地图
+DECLARE_DELEGATE_FiveParams(FUpdateMapData, const FRotator, const float, const TArray<FVector2D>*, const TArray<bool>*, const TArray<float>*)
 
 /**
  * 
@@ -25,6 +29,10 @@ public:
 
 	FInitBagManger InitBagManger;
 	
+	FRegisterMiniMap RegisterMiniMap;
+	
+	FUpdateMapData UpdateMapData;
+	
 public:
 	ASlAiGameMode();
 
@@ -40,7 +48,13 @@ protected:
 
 	void InitBagManager();
 
+	void InitMiniMapCamera();
+
 private:
 
 	bool IsInitBag;
+
+	bool IsInitMiniMap;
+	//渲染小地图指针
+	class ASlAiSceneCapture2D* MiniMapCamera;
 };

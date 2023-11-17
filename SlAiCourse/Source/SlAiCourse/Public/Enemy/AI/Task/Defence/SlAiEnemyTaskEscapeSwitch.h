@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "SlAiEnemyTaskBase.h"
-#include "SlAiEnemyTaskAttackSwitch.generated.h"
+#include "SlAiEnemyTaskEscapeSwitch.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class SLAICOURSE_API USlAiEnemyTaskAttackSwitch : public USlAiEnemyTaskBase
+class SLAICOURSE_API USlAiEnemyTaskEscapeSwitch : public USlAiEnemyTaskBase
 {
 	GENERATED_BODY()
 
@@ -19,11 +19,5 @@ class SLAICOURSE_API USlAiEnemyTaskAttackSwitch : public USlAiEnemyTaskBase
 protected:
 
 	UPROPERTY(EditAnywhere, Category = "Blackboard")
-	struct FBlackboardKeySelector AttackType;
-	
-	UPROPERTY(EditAnywhere, Category = "Blackboard")
 	struct FBlackboardKeySelector EnemyState;
-
-	UPROPERTY(EditAnywhere, Category = "Blackboard")
-	struct FBlackboardKeySelector PlayerPawn;
 };

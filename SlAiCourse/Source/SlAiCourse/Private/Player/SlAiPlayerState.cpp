@@ -19,6 +19,8 @@ ASlAiPlayerState::ASlAiPlayerState()
 
 	HP = 500;
 	Hunger = 600;
+
+	IsDead = false;
 }
 
 void ASlAiPlayerState::OnRegisterShortcutContainer(TArray<TSharedPtr<ShortcutContainer>>* Containers,
@@ -52,6 +54,11 @@ void ASlAiPlayerState::Tick(float DeltaSeconds)
 
 	//执行委托
 	UpdateStateWidget.ExecuteIfBound(HP/500.f,Hunger/600.f);
+
+	if (HP == 0.f && !IsDead)
+	{
+		IsDead = true;
+	}
 }
 
 void ASlAiPlayerState::ChooseShortcut(bool IsUp)
@@ -142,6 +149,20 @@ void ASlAiPlayerState::PromoteHungry()
 bool ASlAiPlayerState::IsPlayerDead()
 {
 	return HP <= 0.f;
+}
+
+void ASlAiPlayerState::AcceptDamage(int DamageVal)
+{
+	HP = FMath::Clamp<float>(HP - DamageVal, 0.f, 500.f);
+	UpdateStateWidget.ExecuteIfBound(HP / 500.f, Hunger / 500.f);
+	if (HP == 0.F && !IsDead)
+	{
+		IsDead = true;
+	}
+	else
+	{
+		
+	}
 }
 
 void ASlAiPlayerState::BeginPlay()

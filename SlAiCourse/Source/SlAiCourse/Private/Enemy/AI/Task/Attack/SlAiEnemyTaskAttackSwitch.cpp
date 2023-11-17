@@ -15,6 +15,7 @@ EBTNodeResult::Type USlAiEnemyTaskAttackSwitch::ExecuteTask(UBehaviorTreeCompone
 		return EBTNodeResult::Failed;
 	}
 
+	OwnerComp.GetBlackboardComponent()->SetValueAsObject(PlayerPawn.SelectedKeyName,SEController->GetPlayerPawn());
 	if (SEController->IsPlayerDead())
 	{
 		SEController->LoosePlayer();

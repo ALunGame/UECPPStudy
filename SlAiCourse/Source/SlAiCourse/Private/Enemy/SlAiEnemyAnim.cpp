@@ -17,6 +17,8 @@ USlAiEnemyAnim::USlAiEnemyAnim()
 	CurrPlayTime = 0.f;
 	StartYPos = 0.f;
 
+	IsDefence = false;
+
 	//等待动画资源
 	static ConstructorHelpers::FObjectFinder<UAnimSequence> StaticAnimIdle_I(TEXT("AnimSequence'/Game/Res/PolygonAdventure/Mannequin/Enemy/Animation/MoveGroup/Enemy_Idle_I.Enemy_Idle_I'"));
 	AnimIdle_I = StaticAnimIdle_I.Object;
@@ -151,4 +153,17 @@ float USlAiEnemyAnim::PlayHurtAction()
 		Montage_Play(AnimHurt);
 	}
 	return AnimHurt->GetPlayLength();
+}
+
+void USlAiEnemyAnim::StopAllAction()
+{
+	Montage_Stop(0);
+}
+
+void USlAiEnemyAnim::ChangeDetection(bool IsOpen)
+{
+	if (SECharacter)
+	{
+		SECharacter->ChangeWeaponDetect(IsOpen);
+	}
 }

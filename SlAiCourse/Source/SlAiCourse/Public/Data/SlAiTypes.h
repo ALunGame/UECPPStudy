@@ -394,3 +394,13 @@ enum class EEnemyAttackType : uint8
 	EA_Pursuit    UMETA(DisplayName = "Pursuit"),
 };
 
+namespace EMiniMapSizeMode
+{
+	enum Type
+	{
+		None,
+		Add,
+		Reduce,
+	};
+}
+

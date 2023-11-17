@@ -47,8 +47,14 @@ public:
 	//游戏聊天
 	TSharedPtr<class  SlAiChatRoomWidget> ChatRoomWidget;
 
+	//聊天
+	TSharedPtr<class  SlAiChatShowWidget> ChatShowWidget;
+
 	//背包
 	TSharedPtr<class  SlAiBagWidget> BagWidget;
+
+	//小地图
+	TSharedPtr<class  SlAiMinMapWidget> MinMapWidget;
 
 private:
 

@@ -68,6 +68,14 @@ struct SLAICOURSE_API FSlAiGameStyle : public FSlateWidgetStyle
 	UPROPERTY(EditAnywhere, Category = Info)
 	FSlateBrush PointerBrush;
 
+	//准星材质
+	UPROPERTY(EditAnywhere, Category = MiniMap)
+	FSlateBrush MinmapBGBrush;
+
+	//角色图标
+	UPROPERTY(EditAnywhere, Category = MiniMap)
+	FSlateBrush PawnPointBrush;
+
 	//玩家状态UI背景图
 	UPROPERTY(EditAnywhere, Category = PlayerState)
 	FSlateBrush PlayerStateBGBrush;
@@ -87,6 +95,10 @@ struct SLAICOURSE_API FSlAiGameStyle : public FSlateWidgetStyle
 	//头像
 	UPROPERTY(EditAnywhere, Category = PlayerState)
 	FSlateBrush PlayerHeadBrush;
+
+	//头像
+	UPROPERTY(EditAnywhere, Category = ChatRoom)
+	FSlateBrush ChatRoomBGBrush;
 	
 	/*
 	* 60号字体

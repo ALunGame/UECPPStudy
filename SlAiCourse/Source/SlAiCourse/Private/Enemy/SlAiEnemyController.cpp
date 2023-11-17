@@ -74,7 +74,7 @@ void ASlAiEnemyController::Tick(float DeltaTime)
 
 	if (SPCharacter && SECharacter)
 	{
-		SECharacter->UpdateHPBarRotation(SPCharacter->ThirdCamera->GetComponentLocation());
+		SECharacter->UpdateHPBarRotation(SPCharacter->GetCameraPos());
 	}
 }
 
@@ -224,25 +224,73 @@ void ASlAiEnemyController::FinishStateHurt()
 	//逃跑
 	if (HPRatio < 0.2f)
 	{
-		BlackboardComp->SetValueAsEnum("EnemyState",(uint8)EEnemyAIState::ES_Escape);
+		FRandomStream Stream;
+		Stream.GenerateNewSeed();
+		int ActionRatio = Stream.RandRange(0,10);
+
+		//防御
+		if (ActionRatio < 4)
+		{
+			BlackboardComp->SetValueAsEnum("EnemyState",(uint8)EEnemyAIState::ES_Defence);
+		}
+		else
+		{
+			BlackboardComp->SetValueAsEnum("EnemyState",(uint8)EEnemyAIState::ES_Escape);
+		}
 	}
 	else
 	{
 		FRandomStream Stream;
 		Stream.GenerateNewSeed();
 		int ActionRatio = Stream.RandRange(0,10);
-
-		BlackboardComp->SetValueAsEnum("EnemyState",(uint8)EEnemyAIState::ES_Attack);
 		
 		//防御
-		// if (ActionRatio < 4)
-		// {
-		// 	BlackboardComp->SetValueAsEnum("EnemyState",(uint8)EEnemyAIState::ES_Defence);
-		// }
-		// else
-		// {
-		// 	BlackboardComp->SetValueAsEnum("EnemyState",(uint8)EEnemyAIState::ES_Attack);
-		// }
+		if (ActionRatio < 4)
+		{
+			BlackboardComp->SetValueAsEnum("EnemyState",(uint8)EEnemyAIState::ES_Defence);
+		}
+		else
+		{
+			BlackboardComp->SetValueAsEnum("EnemyState",(uint8)EEnemyAIState::ES_Attack);
+		}
+	}
+}
+
+void ASlAiEnemyController::FinishStateDefence()
+{
+	ResetProcess(true);
+	SECharacter->StopDefence();
+	
+	float SEToSP = FVector::Distance(SECharacter->GetActorLocation(),GetPlayerLocation());
+	if (SPCharacter->IsAttack && SEToSP < 200.f)
+	{
+		//BlackboardComp->SetValueAsEnum("EnemyState",(uint8)EEnemyAIState::ES_Defence);
+	}
+	else
+	{
+		//逃跑
+		if (HPRatio < 0.2f)
+		{
+			BlackboardComp->SetValueAsEnum("EnemyState",(uint8)EEnemyAIState::ES_Escape);
+		}
+		else
+		{
+			BlackboardComp->SetValueAsEnum("EnemyState",(uint8)EEnemyAIState::ES_Attack);
+		}
+	}
+}
+
+void ASlAiEnemyController::EnemyDead()
+{
+	//停止行为树
+	if (BehaviorComp)
+	{
+		BehaviorComp->StopTree(EBTStopMode::Safe);
+	}
+
+	if (EPDisHandle.IsValid())
+	{
+		GetWorld()->GetTimerManager().ClearTimer(EPDisHandle);
 	}
 }
 

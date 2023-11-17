@@ -4,10 +4,12 @@
 #include "Enemy/SlAiEnemyCharacter.h"
 
 #include "ConstructorHelpers.h"
+#include "SlAiDataHandle.h"
 #include "SlAiEnemyAnim.h"
 #include "SlAiEnemyController.h"
 #include "SlAIEnemyHPWidget.h"
 #include "SlAiEnemyTool.h"
+#include "SlAiFlobObject.h"
 #include "SlAiPlayerCharacter.h"
 #include "WidgetComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -54,6 +56,10 @@ ASlAiEnemyCharacter::ASlAiEnemyCharacter()
 
 	//实例化敌人感知
 	EnemySense = CreateDefaultSubobject<UPawnSensingComponent>(TEXT("EnemySense"));
+
+	//死亡动画
+	AnimDead_I = Cast<UAnimationAsset>(StaticLoadObject(UAnimationAsset::StaticClass(), NULL, *FString("AnimSequence'/Game/Res/PolygonAdventure/Mannequin/Enemy/Animation/FightGroup/Enemy_Dead_I.Enemy_Dead_I'")));
+	AnimDead_II = Cast<UAnimationAsset>(StaticLoadObject(UAnimationAsset::StaticClass(), NULL, *FString("AnimSequence'/Game/Res/PolygonAdventure/Mannequin/Enemy/Animation/FightGroup/Enemy_Dead_II.Enemy_Dead_II'")));
 }
 
 // Called when the game starts or when spawned
@@ -79,7 +85,7 @@ void ASlAiEnemyCharacter::BeginPlay()
 	HPBar->SetRelativeLocation(FVector(0,0,100.f));
 	HPBar->SetDrawSize(FVector2d(100.f,10.f));
 	//初始化血量
-	HP = 100.f;
+	HP = 200.f;
 	HPBarWidget->ChangeHP(HP / 200.f);
 
 	//敌人感知
@@ -93,6 +99,29 @@ void ASlAiEnemyCharacter::BeginPlay()
 	OnSeePlayerDele.BindUFunction(this, "OnSeePlayer");
 	EnemySense->OnSeePawn.Add(OnSeePlayerDele);
 	//EnemySense->OnSeePawn.AddDynamic(this, &ASlAiEnemyCharacter::OnSeePlayer);
+
+	ResourceIndex = 3;
+}
+
+void ASlAiEnemyCharacter::CreateFlobObjects()
+{
+	TSharedPtr<ResourceAttribute> ResourceAttr = *SlAiDataHandle::Get()->ResourceAttrMap.Find(ResourceIndex);
+
+	for (TArray<TArray<int>>::TIterator It(ResourceAttr->FlobObjectInfo); It; ++It)
+	{
+		FRandomStream Stream;
+		Stream.GenerateNewSeed();
+		int Num = Stream.RandRange((*It)[1], (*It)[2]);
+
+		if (GetWorld())
+		{
+			for (int i = 0; i < Num; ++i)
+			{
+				ASlAiFlobObject* FlobObject = GetWorld()->SpawnActor<ASlAiFlobObject>(GetActorLocation() + FVector(0.f, 0.f, 40.f), FRotator::ZeroRotator);
+				FlobObject->CreateFlobObject((*It)[0]);
+			}
+		}
+	}
 }
 
 void ASlAiEnemyCharacter::OnSeePlayer(APawn* PlayerChar)
@@ -111,16 +140,6 @@ void ASlAiEnemyCharacter::OnSeePlayer(APawn* PlayerChar)
 void ASlAiEnemyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	//插值更新朝向
-	if (NeedRotate)
-	{
-		SetActorRotation(FMath::RInterpTo(GetActorRotation(),NextRotation,DeltaTime,10.f));
-		if (FMath::Abs(GetActorRotation().Yaw - NextRotation.Yaw)< 5)
-		{
-			NeedRotate = false;
-		}
-	}
 }
 
 // Called to bind functionality to input
@@ -169,19 +188,41 @@ float ASlAiEnemyCharacter::PlayAttackAction(EEnemyAttackType AttackType)
 	return SEAnim->PlayAttackAction(AttackType);
 }
 
-void ASlAiEnemyCharacter::UpdateRotation(FRotator NewRotator)
-{
-	NextRotation = NewRotator;
-	NeedRotate = true;
-}
-
 void ASlAiEnemyCharacter::AcceptDamage(int DamageValue)
 {
+	if (SEAnim && SEAnim->IsDefence)
+	{
+		return;
+	}
+	
 	HP = FMath::Clamp<float>(HP - DamageValue, 0.f, 200.f);
 	HPBarWidget->ChangeHP(HP / 200.f);
-	if (HP == 0.f)
+	if (HP == 0.f && !DeadHandle.IsValid())
 	{
+		SEController->EnemyDead();
+		SEAnim->StopAllAction();
+
+		float DeadDuration = 0.f;
+		FRandomStream Stream;
+		Stream.GenerateNewSeed();
+		int SelectIndex = Stream.RandRange(0,1);
+		if (SelectIndex == 0)
+		{
+			GetMesh()->PlayAnimation(AnimDead_I,false);
+			DeadDuration = AnimDead_I->GetPlayLength()*2;
+		}
+		else
+		{
+			GetMesh()->PlayAnimation(AnimDead_II,false);
+			DeadDuration = AnimDead_I->GetPlayLength()*2;
+		}
+
+		//生成掉落物
+		CreateFlobObjects();
 		
+		//时间委托
+		FTimerDelegate TimerDelegate = FTimerDelegate::CreateUObject(this, &ASlAiEnemyCharacter::DestroyEvent);
+		GetWorld()->GetTimerManager().SetTimer(DeadHandle, TimerDelegate, DeadDuration, false);
 	}
 	else
 	{
@@ -197,5 +238,60 @@ float ASlAiEnemyCharacter::PlayHurtAction()
 	}
 
 	return SEAnim->PlayHurtAction();
+}
+
+void ASlAiEnemyCharacter::StartDefence()
+{
+	if (SEAnim)
+	{
+		SEAnim->IsDefence = true;
+	}
+}
+
+void ASlAiEnemyCharacter::StopDefence()
+{
+	if (SEAnim)
+	{
+		SEAnim->IsDefence = false;
+	}
+}
+
+void ASlAiEnemyCharacter::DestroyEvent()
+{
+	//销毁时间函数
+	if (DeadHandle.IsValid())
+	{
+		GetWorld()->GetTimerManager().ClearTimer(DeadHandle);
+	}
+	GetWorld()->DestroyActor(this);
+}
+
+FText ASlAiEnemyCharacter::GetInfoText() const
+{
+	TSharedPtr<ResourceAttribute> ResourceAttr = *SlAiDataHandle::Get()->ResourceAttrMap.Find(ResourceIndex);
+
+	switch (SlAiDataHandle::Get()->CurCulture)
+	{
+	case ECultureTeam::EN:
+		return ResourceAttr->EN;
+	case ECultureTeam::ZH:
+		return ResourceAttr->ZH;
+	default: ;
+	}
+	return ResourceAttr->ZH;
+}
+
+void ASlAiEnemyCharacter::ChangeWeaponDetect(bool IsOpen)
+{
+	ASlAiEnemyTool* WeaponClass = Cast<ASlAiEnemyTool>(WeaponSocket->GetChildActor());
+	if (WeaponClass)
+	{
+		WeaponClass->ChangeOverlayDetect(IsOpen);
+	}
+}
+
+bool ASlAiEnemyCharacter::IsLockPlayer()
+{
+	return SEController->IsLockPlayer;
 }
 

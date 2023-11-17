@@ -3,11 +3,14 @@
 
 #include "SlAiGameMode.h"
 
+#include "EngineUtils.h"
 #include "SlAiBagManager.h"
 #include "SlAiDataHandle.h"
+#include "SlAiEnemyCharacter.h"
 #include "SlAiGameHUD.h"
 #include "SlAiGameInstance.h"
 #include "SlAiHelper.h"
+#include "SlAiSceneCapture2D.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/SlAiPlayerCharacter.h"
 #include "..\..\Public\Player\SlAiPlayerController.h"
@@ -30,10 +33,14 @@ ASlAiGameMode::ASlAiGameMode()
 	DefaultPawnClass = ASlAiPlayerCharacter::StaticClass();
 
 	IsInitBag = false;
+
+	IsInitMiniMap = false;
 }
 
 void ASlAiGameMode::Tick(float DeltaSeconds)
 {
+	
+	InitMiniMapCamera();
 	InitBagManager();
 }
 
@@ -74,4 +81,40 @@ void ASlAiGameMode::InitBagManager()
 	//绑定委托
 	SlAiBagManager::Get()->PlayerThrowObject.BindUObject(SPCharacter,&ASlAiPlayerCharacter::PlayerThrowObject);
 	SlAiBagManager::Get()->ChangeHandObject.BindUObject(SPState,&ASlAiPlayerState::ChangeHandObject);
+}
+
+void ASlAiGameMode::InitMiniMapCamera()
+{
+	if (!IsInitMiniMap && GetWorld())
+	{
+		MiniMapCamera = GetWorld()->SpawnActor<ASlAiSceneCapture2D>(ASlAiSceneCapture2D::StaticClass());
+		RegisterMiniMap.ExecuteIfBound(MiniMapCamera->GetMiniMapTex());
+		SPController->UpdateMiniMapWidth.BindUObject(MiniMapCamera,&ASlAiSceneCapture2D::UpdateMiniMapWidth);
+		IsInitMiniMap = true;
+	}
+
+	if (IsInitMiniMap)
+	{
+		MiniMapCamera->UpdateTransform(SPCharacter->GetActorLocation(),SPCharacter->GetActorRotation());
+
+		TArray<FVector2D> EnemyPosList;
+		TArray<bool> EnemyLockList;
+		TArray<float> EnemyRotateList;
+
+		FVector PlayerPos = SPCharacter->GetActorLocation();
+		//获取场景中的敌人
+		for	(TActorIterator<ASlAiEnemyCharacter> EnemyIt(GetWorld()); EnemyIt; ++EnemyIt)
+		{
+			FVector EnemyPos = FVector((*EnemyIt)->GetActorLocation().X - SPCharacter->GetActorLocation().X, (*EnemyIt)->GetActorLocation().Y - SPCharacter->GetActorLocation().Y, 0.f);
+			EnemyPos = FQuat(FVector::UpVector, FMath::DegreesToRadians(-SPCharacter->GetActorRotation().Yaw - 90.f)) * EnemyPos;
+			EnemyPosList.Add(FVector2D(EnemyPos.X, EnemyPos.Y));
+
+			EnemyLockList.Add((*EnemyIt)->IsLockPlayer());
+			EnemyRotateList.Add((*EnemyIt)->GetActorRotation().Yaw - SPCharacter->GetActorRotation().Yaw);
+		}
+		
+
+		UpdateMapData.ExecuteIfBound(SPCharacter->GetActorRotation(),MiniMapCamera->GetMapSize(),&EnemyPosList,&EnemyLockList,&EnemyRotateList);
+	}
+	
 }

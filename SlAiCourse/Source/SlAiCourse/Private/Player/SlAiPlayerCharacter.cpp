@@ -23,6 +23,8 @@ ASlAiPlayerCharacter::ASlAiPlayerCharacter()
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	IsAttack = false;
+
 	//自动接受输入
 	AutoReceiveInput = EAutoReceiveInput::Player0;
 
@@ -175,6 +177,8 @@ void ASlAiPlayerCharacter::ChangeHandObjectDetect(bool IsOpen)
 	{
 		HandObjectClass->ChangeOverlayDetect(IsOpen);
 	}
+
+	IsAttack = IsOpen;
 }
 
 void ASlAiPlayerCharacter::ChangeHandObjectRender(bool IsOpen)
@@ -227,6 +231,26 @@ bool ASlAiPlayerCharacter::IsPlayerDead()
 		return false;
 	}
 	return MineController->SPState->IsPlayerDead();
+}
+
+void ASlAiPlayerCharacter::AcceptDamage(int DamageVal)
+{
+	if (!MineController->SPState)
+		return;
+	MineController->SPState->AcceptDamage(DamageVal);
+}
+
+FVector ASlAiPlayerCharacter::GetCameraPos()
+{
+	switch (MineController->CurrViewType)
+	{
+	case EViewType::First:
+		return FirstCamera->K2_GetComponentLocation();
+	case EViewType::Third:
+		return ThirdCamera->K2_GetComponentLocation();
+	default: ;
+	}
+	return ThirdCamera->K2_GetComponentLocation();
 }
 
 

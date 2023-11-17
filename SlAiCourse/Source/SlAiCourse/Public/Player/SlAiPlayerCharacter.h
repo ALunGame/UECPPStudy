@@ -39,6 +39,9 @@ public:
 	 * 当前控制器
 	 */
 	ASlAiPlayerController* MineController;
+
+	//是否在攻击
+	bool IsAttack;
 	
 public:
 	// Sets default values for this character's properties
@@ -80,6 +83,10 @@ public:
 
 	//是否死亡
 	bool IsPlayerDead();
+
+	void AcceptDamage(int DamageVal);
+
+	FVector GetCameraPos();
 
 protected:
 	// Called when the game starts or when spawned
