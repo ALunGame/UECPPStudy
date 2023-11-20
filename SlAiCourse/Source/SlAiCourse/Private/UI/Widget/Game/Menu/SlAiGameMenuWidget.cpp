@@ -229,7 +229,7 @@ void SlAiGameMenuWidget::ChangeCulture(ECultureTeam Cultrue)
 
 void SlAiGameMenuWidget::ChangeVolume(const float MusicVolume, const float SoundVolume)
 {
-	SlAiDataHandle::Get()->ResetMenuVolume(MusicVolume, SoundVolume);
+	SlAiDataHandle::Get()->ResetGameVolume(MusicVolume, SoundVolume);
 }
 
 END_SLATE_FUNCTION_BUILD_OPTIMIZATION

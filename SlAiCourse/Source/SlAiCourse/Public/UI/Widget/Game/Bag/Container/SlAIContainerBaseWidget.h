@@ -39,6 +39,8 @@ public:
 
 	/** Constructs this widget with InArgs */
 	void Construct(const FArguments& InArgs);
+	
+	void ResetContainerPara(int ObjectID, int Num);
 
 	//创建容器
 	static TSharedPtr<SlAIContainerBaseWidget> CreateContainer(EContainerType::Type NeedType, int WorkID);

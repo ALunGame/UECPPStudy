@@ -105,18 +105,16 @@ void USlAiPlayerAnim::InitSPCharacter()
 
 void USlAiPlayerAnim::UpdateParam()
 {
+	if (!SPCharacter) return;
+	
 	//速度
 	Speed = SPCharacter->GetVelocity().Size();
 
 	//旋转
-	float SpineDir = SPCharacter->GetActorRotation().Yaw - 90.f;
-	if (SpineDir > 180.f)
-	{
-		SpineDir -= 360.f;
-	}
-	if (SpineDir < -180.f)
-	{
-		SpineDir += 360.f;
-	}
-	SpineRotator = FRotator(0.f,SpineDir,90.f);
+	// float SpineDir = SPCharacter->GetActorRotation().Yaw - 90.f;
+	// if (SpineDir > 180.f) SpineDir -= 360.f;
+	// if (SpineDir < -180.f) SpineDir += 360.f;
+	//
+	// SpineDir = FMath::Clamp<float>(-50.f, SpineDir, 50.f);
+	// SpineRotator = FRotator(0.f, SpineDir, 90.f);
 }

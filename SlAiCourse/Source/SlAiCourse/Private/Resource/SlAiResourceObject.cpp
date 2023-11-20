@@ -27,6 +27,8 @@ ASlAiResourceObject::ASlAiResourceObject()
 	BaseMesh->SetGenerateOverlapEvents(true);
 
 	IsInit = false;
+
+	IsDestroyNextTick = false;
 }
 
 // Called when the game starts or when spawned
@@ -72,6 +74,12 @@ void ASlAiResourceObject::Tick(float DeltaTime)
 		TSharedPtr<ResourceAttribute> ResourceAttr = *SlAiDataHandle::Get()->ResourceAttrMap.Find(ResourceIndex);
 		HP = BaseHP = ResourceAttr->HP;
 		IsInit = true;
+	}
+
+	if (IsDestroyNextTick)
+	{
+		GetWorld()->DestroyActor(this);
+		IsDestroyNextTick = false;
 	}
 }
 

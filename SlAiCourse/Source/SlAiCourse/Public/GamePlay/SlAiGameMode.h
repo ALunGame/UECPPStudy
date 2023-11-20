@@ -41,6 +41,8 @@ public:
 
 	//组件赋值
 	void InitGameplayMode();
+	
+	void SaveGame();
 
 protected:
 	
@@ -50,6 +52,11 @@ protected:
 
 	void InitMiniMapCamera();
 
+	void LoadRecord();
+
+	//背包存档，第二帧加载，否则快捷栏为创建会崩溃
+	void LoadRecordBag();
+	
 private:
 
 	bool IsInitBag;
@@ -57,4 +64,7 @@ private:
 	bool IsInitMiniMap;
 	//渲染小地图指针
 	class ASlAiSceneCapture2D* MiniMapCamera;
+
+	bool IsNeedLoadRecord;
+	class USlAiSaveGame* GameRecord;
 };

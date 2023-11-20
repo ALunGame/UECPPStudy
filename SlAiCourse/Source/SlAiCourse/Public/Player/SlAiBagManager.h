@@ -48,6 +48,9 @@ public:
 	bool AddObject(int ObjectID);
 
 	bool EatUpEvent(int ShortcutID);
+	
+	void LoadRecord(TArray<int32>* InputIndex, TArray<int32>* InputNum, TArray<int32>* NormalIndex, TArray<int32>* NormalNum, TArray<int32>* ShortcutIndex, TArray<int32>* ShortcutNum);
+	void SaveData(TArray<int32>& InputIndex, TArray<int32>& InputNum, TArray<int32>& NormalIndex, TArray<int32>& NormalNum, TArray<int32>& ShortcutIndex, TArray<int32>& ShortcutNum);
 
 private:
 	static TSharedRef<SlAiBagManager> Create();

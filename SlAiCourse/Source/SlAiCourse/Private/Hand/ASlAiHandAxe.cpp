@@ -4,6 +4,7 @@
 #include "ConstructorHelpers.h"
 #include "..\..\Public\Hand\SlAiHandAxe.h"
 #include "Components/BoxComponent.h"
+#include "Sound/SoundWave.h"
 
 
 // Sets default values
@@ -29,5 +30,7 @@ void ASlAiHandAxe::BeginPlay()
 
 	//设置物品Id
 	ObjectIndex = 5;
+
+	OverlaySound = LoadObject<USoundWave>(nullptr, TEXT("SoundWave'/Game/Res/Sound/GameSound/Axe.Axe'"));
 }
 

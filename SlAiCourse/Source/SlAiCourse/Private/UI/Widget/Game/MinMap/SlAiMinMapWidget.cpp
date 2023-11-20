@@ -55,7 +55,7 @@ void SlAiMinMapWidget::RegisterMiniMap(UTextureRenderTarget2D* MiniMapRender)
 	//获得材质
 	UMaterialInterface* MiniMapMatInst = LoadObject<UMaterialInterface>(nullptr,TEXT("/Script/Engine.MaterialInstanceConstant'/Game/Material/MinMapMat_Inst.MinMapMat_Inst'"));	
 	//创建材质
-	UMaterialInstanceDynamic* MiniMapMatDynamic = UMaterialInstanceDynamic::Create(MiniMapMatInst,nullptr);
+	MiniMapMatDynamic = UMaterialInstanceDynamic::Create(MiniMapMatInst,nullptr);
 	//设置属性
 	MiniMapMatDynamic->SetTextureParameterValue(FName("MinMapTex"),MiniMapRender);
 	//创建笔刷
@@ -112,7 +112,7 @@ void SlAiMinMapWidget::UpdateMapData(const FRotator PlayerRotator, const float M
 	TArray<bool> EnemyViewLock;
 
 	//敌人信息
-	for (int i = 0; i < (*EnemyPosList).Num(); ++i) {
+	for (int i = 0; i < EnemyPosList->Num(); ++i) {
 		//实际长度
 		float RealDistance = (*EnemyPosList)[i].Size();
 		//长度小于地图半径
@@ -147,107 +147,118 @@ void SlAiMinMapWidget::UpdateMapData(const FRotator PlayerRotator, const float M
 	int ViewCount = 0;
 	//设置尺寸
 	EnemyViewMatDynamic->SetScalarParameterValue(FName("Scale"), 1000.f / MapSize);
-	
-	for (int i = 0; i < EnemyViewPos.Num(); ++i, ++ViewCount) {
-		FString PosName = FString("Position_") + FString::FromInt(i + 1);
-		FString AngleName = FString("Angle_") + FString::FromInt(i + 1);
 
-		//锁定玩家
-		if (!EnemyViewLock[i]) {
-			EnemyViewMatDynamic->SetVectorParameterValue(FName(*PosName), FLinearColor((EnemyViewPos[i].X - 20.f) / 280.f, (EnemyViewPos[i].Y - 20.f) / 280.f, 0.f, 0.f));
-			EnemyViewMatDynamic->SetScalarParameterValue(FName(*AngleName), EnemyViewRotate[i]);
-		}
-		else
-		{
-			EnemyViewMatDynamic->SetVectorParameterValue(FName(*PosName), FLinearColor(0.f, 0.f, 0.f, 0.f));
-			EnemyViewMatDynamic->SetScalarParameterValue(FName(*AngleName), 0.f);
+	if (!EnemyViewPos.IsEmpty() && EnemyViewPos.Num() > 0)
+	{
+		for (int i = 0; i < EnemyViewPos.Num(); ++i,++ViewCount) {
+			if (i + 1 <= 10)
+			{
+				FString PosName = FString("Position_") + FString::FromInt(i + 1);
+				FString AngleName = FString("Angle_") + FString::FromInt(i + 1);
+
+				//锁定玩家
+				if (!EnemyViewLock[i]) {
+					EnemyViewMatDynamic->SetVectorParameterValue(FName(*PosName), FLinearColor((EnemyViewPos[i].X - 20.f) / 280.f, (EnemyViewPos[i].Y - 20.f) / 280.f, 0.f, 0.f));
+					EnemyViewMatDynamic->SetScalarParameterValue(FName(*AngleName), EnemyViewRotate[i]);
+				}
+				else
+				{
+					EnemyViewMatDynamic->SetVectorParameterValue(FName(*PosName), FLinearColor(0.f, 0.f, 0.f, 0.f));
+					EnemyViewMatDynamic->SetScalarParameterValue(FName(*AngleName), 0.f);
+				}
+			}
 		}
 	}
 
 	//剩下的都不渲染
 	for (ViewCount += 1; ViewCount < 11; ++ViewCount) {
-		FString PosName = FString("Position_") + FString::FromInt(ViewCount);
-		FString AngleName = FString("Angle_") + FString::FromInt(ViewCount);
-		EnemyViewMatDynamic->SetVectorParameterValue(FName(*PosName), FLinearColor(0.f, 0.f, 0.f, 0.f));
-		EnemyViewMatDynamic->SetScalarParameterValue(FName(*AngleName), 0.f);
+		if (ViewCount <= 10)
+		{
+			FString PosName = FString("Position_") + FString::FromInt(ViewCount);
+			FString AngleName = FString("Angle_") + FString::FromInt(ViewCount);
+			EnemyViewMatDynamic->SetVectorParameterValue(FName(*PosName), FLinearColor(0.f, 0.f, 0.f, 0.f));
+			EnemyViewMatDynamic->SetScalarParameterValue(FName(*AngleName), 0.f);
+		}
 	}
 }
 
-int32 SlAiMinMapWidget::OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry,
-	const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId,
-	const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const
-{
-	SCompoundWidget::OnPaint(Args, AllottedGeometry, MyCullingRect, OutDrawElements, LayerId, InWidgetStyle,
-	                                bParentEnabled);
-
-	//渲染玩家坐标
-	FSlateDrawElement::MakeBox(
-		OutDrawElements,
-		LayerId + 100,		//层级
-		AllottedGeometry.ToPaintGeometry(FVector2d(16.f,16.f),
-			FSlateLayoutTransform(FVector2d(150.f,150.f))),//绘制位置和大小
-		&GameStyle->PawnPointBrush,//绘制笔刷
-		ESlateDrawEffect::None,		//绘制特效
-		FLinearColor(1.f,1.f,0.f,1.f)//绘制颜色
-	);
-	
-
-	//绘制方向文字
-	FSlateDrawElement::MakeText(
-		OutDrawElements,
-		LayerId + 10,		//层级
-		AllottedGeometry.ToPaintGeometry(FVector2d(16.f,16.f),
-			FSlateLayoutTransform(NorthLocation - FVector2d(8.f,8.f))),//绘制位置和大小
-		NSLOCTEXT("SlAiGame","N","N"),
-		GameStyle->Font_16,
-		ESlateDrawEffect::None,		//绘制特效
-		FLinearColor(1.f,1.f,1.f,1.f)//绘制颜色
-	);
-	FSlateDrawElement::MakeText(
-		OutDrawElements,
-		LayerId + 10,		//层级
-		AllottedGeometry.ToPaintGeometry(FVector2d(16.f,16.f),
-			FSlateLayoutTransform(SouthLocation - FVector2d(8.f,8.f))),//绘制位置和大小
-		NSLOCTEXT("SlAiGame","S","S"),
-		GameStyle->Font_16,
-		ESlateDrawEffect::None,		//绘制特效
-		FLinearColor(1.f,1.f,1.f,1.f)//绘制颜色
-	);
-	FSlateDrawElement::MakeText(
-	OutDrawElements,
-		LayerId + 10,		//层级
-		AllottedGeometry.ToPaintGeometry(FVector2d(16.f,16.f),
-		FSlateLayoutTransform(EastLocation - FVector2d(8.f,8.f))),//绘制位置和大小
-		NSLOCTEXT("SlAiGame","E","E"),
-		GameStyle->Font_16,
-		ESlateDrawEffect::None,		//绘制特效
-		FLinearColor(1.f,1.f,1.f,1.f)//绘制颜色
-	);
-	FSlateDrawElement::MakeText(
-		OutDrawElements,
-		LayerId + 10,		//层级
-		AllottedGeometry.ToPaintGeometry(FVector2d(16.f,16.f),
-		FSlateLayoutTransform(WestLocation - FVector2d(8.f,8.f))),//绘制位置和大小
-		NSLOCTEXT("SlAiGame","W","W"),
-		GameStyle->Font_16,
-		ESlateDrawEffect::None,		//绘制特效
-		FLinearColor(1.f,1.f,1.f,1.f)//绘制颜色
-	);
-
-	//渲染敌人位置
-	for (int i = 0; i < EnemyPos.Num(); ++i) {
-		//渲染图标
-		FSlateDrawElement::MakeBox(
-			OutDrawElements,
-			LayerId + 100,
-			AllottedGeometry.ToPaintGeometry(FVector2D(10.f, 10.f),FSlateLayoutTransform(EnemyPos[i] - FVector2D(5.f, 5.f))),
-			&GameStyle->PawnPointBrush,
-			ESlateDrawEffect::None,
-			EnemyLock[i] ? FLinearColor(1.f, 0.f, 0.f, 1.f) : FLinearColor(0.f, 1.f, 0.f, 1.f)
-		);
-	}
-
-	return LayerId;
-}
+// int32 SlAiMinMapWidget::OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry,
+// 	const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId,
+// 	const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const
+// {
+// 	SCompoundWidget::OnPaint(Args, AllottedGeometry, MyCullingRect, OutDrawElements, LayerId, InWidgetStyle,
+// 	                                bParentEnabled);
+//
+// 	return LayerId;
+//
+// 	//渲染玩家坐标
+// 	FSlateDrawElement::MakeBox(
+// 		OutDrawElements,
+// 		LayerId + 100,		//层级
+// 		AllottedGeometry.ToPaintGeometry(FVector2d(16.f,16.f),
+// 			FSlateLayoutTransform(FVector2d(150.f,150.f))),//绘制位置和大小
+// 		&GameStyle->PawnPointBrush,//绘制笔刷
+// 		ESlateDrawEffect::None,		//绘制特效
+// 		FLinearColor(1.f,1.f,0.f,1.f)//绘制颜色
+// 	);
+// 	
+//
+// 	//绘制方向文字
+// 	FSlateDrawElement::MakeText(
+// 		OutDrawElements,
+// 		LayerId + 10,		//层级
+// 		AllottedGeometry.ToPaintGeometry(FVector2d(16.f,16.f),
+// 			FSlateLayoutTransform(NorthLocation - FVector2d(8.f,8.f))),//绘制位置和大小
+// 		NSLOCTEXT("SlAiGame","N","N"),
+// 		GameStyle->Font_16,
+// 		ESlateDrawEffect::None,		//绘制特效
+// 		FLinearColor(1.f,1.f,1.f,1.f)//绘制颜色
+// 	);
+// 	FSlateDrawElement::MakeText(
+// 		OutDrawElements,
+// 		LayerId + 10,		//层级
+// 		AllottedGeometry.ToPaintGeometry(FVector2d(16.f,16.f),
+// 			FSlateLayoutTransform(SouthLocation - FVector2d(8.f,8.f))),//绘制位置和大小
+// 		NSLOCTEXT("SlAiGame","S","S"),
+// 		GameStyle->Font_16,
+// 		ESlateDrawEffect::None,		//绘制特效
+// 		FLinearColor(1.f,1.f,1.f,1.f)//绘制颜色
+// 	);
+// 	FSlateDrawElement::MakeText(
+// 	OutDrawElements,
+// 		LayerId + 10,		//层级
+// 		AllottedGeometry.ToPaintGeometry(FVector2d(16.f,16.f),
+// 		FSlateLayoutTransform(EastLocation - FVector2d(8.f,8.f))),//绘制位置和大小
+// 		NSLOCTEXT("SlAiGame","E","E"),
+// 		GameStyle->Font_16,
+// 		ESlateDrawEffect::None,		//绘制特效
+// 		FLinearColor(1.f,1.f,1.f,1.f)//绘制颜色
+// 	);
+// 	FSlateDrawElement::MakeText(
+// 		OutDrawElements,
+// 		LayerId + 10,		//层级
+// 		AllottedGeometry.ToPaintGeometry(FVector2d(16.f,16.f),
+// 		FSlateLayoutTransform(WestLocation - FVector2d(8.f,8.f))),//绘制位置和大小
+// 		NSLOCTEXT("SlAiGame","W","W"),
+// 		GameStyle->Font_16,
+// 		ESlateDrawEffect::None,		//绘制特效
+// 		FLinearColor(1.f,1.f,1.f,1.f)//绘制颜色
+// 	);
+//
+// 	//渲染敌人位置
+// 	for (int i = 0; i < EnemyPos.Num(); ++i) {
+// 		//渲染图标
+// 		FSlateDrawElement::MakeBox(
+// 			OutDrawElements,
+// 			LayerId + 100,
+// 			AllottedGeometry.ToPaintGeometry(FVector2D(10.f, 10.f),FSlateLayoutTransform(EnemyPos[i] - FVector2D(5.f, 5.f))),
+// 			&GameStyle->PawnPointBrush,
+// 			ESlateDrawEffect::None,
+// 			EnemyLock[i] ? FLinearColor(1.f, 0.f, 0.f, 1.f) : FLinearColor(0.f, 1.f, 0.f, 1.f)
+// 		);
+// 	}
+//
+// 	return LayerId;
+// }
 
 END_SLATE_FUNCTION_BUILD_OPTIMIZATION

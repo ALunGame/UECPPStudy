@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SlAiSaveGame.h"
 #include "SlAiTypes.h"
 #include "GameFramework/PlayerState.h"
 #include "SlAiPlayerState.generated.h"
@@ -68,6 +69,9 @@ public:
 
 	//接受伤害
 	void AcceptDamage(int DamageVal);
+
+	void LoadState(float HPVal, float HungryVal);
+	void SaveState(float& PlayerHP, float& PlayerHunger);
 
 protected:
 	virtual void BeginPlay() override;

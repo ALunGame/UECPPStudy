@@ -50,4 +50,6 @@ protected:
 	//盒子碰撞盒
 	UPROPERTY(EditAnywhere,Category="SlAi")
 		class UBoxComponent* AffectCollision;
+
+	class USoundWave* OverlaySound;
 };

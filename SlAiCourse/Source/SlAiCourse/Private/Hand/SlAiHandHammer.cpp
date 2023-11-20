@@ -5,6 +5,7 @@
 
 #include "ConstructorHelpers.h"
 #include "Components/BoxComponent.h"
+#include "Sound/SoundWave.h"
 
 
 // Sets default values
@@ -39,6 +40,8 @@ void ASlAiHandHammer::BeginPlay()
 	Super::BeginPlay();
 
 	ObjectIndex = 6;
+
+	OverlaySound = LoadObject<USoundWave>(nullptr, TEXT("SoundWave'/Game/Res/Sound/GameSound/Hammer.Hammer'"));
 }
 
 

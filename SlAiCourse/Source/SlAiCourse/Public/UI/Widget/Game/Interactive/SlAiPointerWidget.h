@@ -39,6 +39,7 @@ private:
 	float CurrSize;
 
 	//动态材质指针
+	UPROPERTY(EditAnywhere,Category="SlAi")
 	class UMaterialInstanceDynamic* PointerMaterial;
 
 	//是否改变大小

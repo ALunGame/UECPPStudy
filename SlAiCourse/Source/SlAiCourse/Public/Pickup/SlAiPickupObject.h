@@ -15,6 +15,8 @@ public:
 
 	int ObjectIndex;
 
+	bool IsDestroyNextTick;
+
 public:
 	// Sets default values for this actor's properties
 	ASlAiPickupObject();

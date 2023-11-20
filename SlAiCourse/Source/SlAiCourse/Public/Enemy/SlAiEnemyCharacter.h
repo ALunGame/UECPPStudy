@@ -16,6 +16,7 @@ public:
 
 	//资源iD
 	int ResourceIndex;
+	bool IsDestroyNextTick;
 
 public:
 	// Sets default values for this character's properties
@@ -58,7 +59,9 @@ public:
 	void ChangeWeaponDetect(bool IsOpen);
 
 	bool IsLockPlayer();
-	
+	void LoadHP(float Element);
+	float GetHP();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

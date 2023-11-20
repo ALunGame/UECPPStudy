@@ -24,7 +24,7 @@ public:
 
 	void UpdateMapData(const FRotator PlayerRotator, const float MiniMapSize, const TArray<FVector2D>* EnemyPosList, const TArray<bool>* EnemyLockList,const TArray<float>* EnemyRotateList);
 
-	virtual int32 OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const override;
+	//virtual int32 OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const override;
 	
 private:
 
@@ -37,6 +37,7 @@ private:
 	TSharedPtr<SImage> EnemyViewImage;
 
 	//敌人视野材质
+	UPROPERTY(EditAnywhere,Category="SlAi")
 	class UMaterialInstanceDynamic* EnemyViewMatDynamic;
 
 	struct FSlateBrush* MiniMapBrush;
@@ -56,4 +57,6 @@ private:
 	//敌人是否锁定玩家
 	TArray<bool> EnemyLock;
 	
+	UPROPERTY(EditAnywhere,Category="SlAi")
+	UMaterialInstanceDynamic* MiniMapMatDynamic;
 };

@@ -39,6 +39,7 @@ private:
 
 	class UTexture* ObjectIconTex;
 
+	UPROPERTY(EditAnywhere,Category="SlAi")
 	class UMaterialInstanceDynamic* ObjectIconMatDynamic;
 
 	//玩家指针

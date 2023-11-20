@@ -175,7 +175,7 @@ int32 SlAiBagWidget::OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGe
 		//渲染物品图标
 		FSlateDrawElement::MakeBox(
 			OutDrawElements,
-			LayerId + 30,		//层级
+			LayerId + 100,		//层级
 			AllottedGeometry.ToPaintGeometry(FVector2d(64.f,64.f),
 				FSlateLayoutTransform(MousePosition - FVector2d(32.f,32.f))),//绘制位置和大小
 			SlAiDataHandle::Get()->ObjectBrushList[SlAiBagManager::Get()->ObjectIndex],//绘制笔刷
@@ -190,7 +190,7 @@ int32 SlAiBagWidget::OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGe
 		{
 			FSlateDrawElement::MakeText(
 				OutDrawElements,
-				LayerId + 30,		//层级
+				LayerId + 100,		//层级
 				AllottedGeometry.ToPaintGeometry(FVector2d(16.f,16.f),
 				FSlateLayoutTransform(MousePosition - FVector2d(12.f,16.f))),//绘制位置和大小
 				FString::FromInt(SlAiBagManager::Get()->ObjectNum),

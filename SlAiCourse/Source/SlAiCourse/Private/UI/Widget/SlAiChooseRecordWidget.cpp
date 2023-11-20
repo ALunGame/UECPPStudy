@@ -21,6 +21,11 @@ void SlAiChooseRecordWidget::Construct(const FArguments& InArgs)
 	{
 		OptionSource.Add(MakeShareable(new FString(*Record)));
 	}
+
+	if (OptionSource.Num() <= 0)
+	{
+		return;
+	}
 	
 	ChildSlot
 	[

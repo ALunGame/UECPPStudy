@@ -102,6 +102,9 @@ ASlAiPlayerCharacter::ASlAiPlayerCharacter()
 	HandObject = CreateDefaultSubobject<UChildActorComponent>(TEXT("HandObject"));
 
 	IsAllowSwitchView = false;
+
+	AnimDead = Cast<UAnimationAsset>(StaticLoadObject(UAnimationAsset::StaticClass(), nullptr, *FString("AnimSequence'/Game/Res/PolygonAdventure/Mannequin/Player/Animation/Player_Death.Player_Death'")));
+
 }
 
 // Called when the game starts or when spawned
@@ -251,6 +254,12 @@ FVector ASlAiPlayerCharacter::GetCameraPos()
 	default: ;
 	}
 	return ThirdCamera->K2_GetComponentLocation();
+}
+
+float ASlAiPlayerCharacter::PlayDeadAnim()
+{
+	GetMesh()->PlayAnimation(AnimDead, false);
+	return AnimDead->GetPlayLength();
 }
 
 

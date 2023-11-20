@@ -26,7 +26,9 @@ public:
 private:
 	//获取Menu样式
 	const struct FSlAiGameStyle *GameStyle;
-	
+
+	UPROPERTY(EditAnywhere,Category="SlAi")
 	class UMaterialInstanceDynamic* HPMaterial;
+	UPROPERTY(EditAnywhere,Category="SlAi")
 	class UMaterialInstanceDynamic* HungerMaterial;
 };

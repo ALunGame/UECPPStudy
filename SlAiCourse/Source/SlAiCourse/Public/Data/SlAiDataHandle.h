@@ -20,8 +20,11 @@ public:
 	void ChangeLocalizationCulture(ECultureTeam newCulture);
 	
 	void ResetMenuVolume(float MusicVol, float SoundVol);
+	
+	void ResetGameVolume(float MusicVol, float SoundVol);
 
 	void InitGameData();
+	void AddNewRecord();
 
 public:
 	//当前语言
@@ -65,6 +68,8 @@ private:
 	void InitResourceAttr();
 	
 	void InitCompoundTableMap();
+
+	void InitGameAudio();
 private:
 	static TSharedPtr<SlAiDataHandle> DataHandleInstance;
 
@@ -74,5 +79,13 @@ private:
 	const struct FSlAiMenuStyle *MenuStyle;
 	//获取Menu样式
 	const struct FSlAiGameStyle *GameStyle;
+
+	//音乐组件
+	class USoundMix* SlAiSoundMix;
+	
+	class USoundClass* SlAiSoundClass;
+	class USoundClass* SlAiMusicClass;
+
+	class FAudioDevice* AudioDevice;
 };
 

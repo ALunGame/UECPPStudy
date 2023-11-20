@@ -16,6 +16,8 @@ public:
 
 	//Id
 	int ResourceIndex;
+
+	bool IsDestroyNextTick;
 	
 public:
 	// Sets default values for this actor's properties

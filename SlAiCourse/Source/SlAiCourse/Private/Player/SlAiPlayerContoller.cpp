@@ -88,6 +88,31 @@ void ASlAiPlayerController::ChangeHandObject()
 	SPCharacter->ChangeHandObject(ASlAiHandObject::SpawnHandObject(SPState->GetCurrHandleObjectIndex()));
 }
 
+void ASlAiPlayerController::PlayerDead()
+{
+	//转到第三人称
+	CurrViewType = EViewType::Third;
+	SPCharacter->ChangeView(CurrViewType);
+
+	float DeadTime = SPCharacter->PlayDeadAnim();
+	
+	LockedInput(true);
+
+	FTimerDelegate TimerDelegate = FTimerDelegate::CreateUObject(this, &ASlAiPlayerController::DeadTimeOut);
+	GetWorld()->GetTimerManager().SetTimer(DeadHandle,TimerDelegate,DeadTime,false);
+}
+
+void ASlAiPlayerController::DeadTimeOut()
+{
+	//游戏暂停
+	SetPause(true);
+	SwitchInputMode(false);
+	ShowGameUI.ExecuteIfBound(CurrUIType,EGameUIType::Lose);
+	//更新UI
+	CurrUIType = EGameUIType::Lose;
+	LockedInput(true);
+}
+
 void ASlAiPlayerController::BeginPlay()
 {
 	//鼠标不显示

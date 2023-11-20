@@ -3,6 +3,7 @@
 
 #include "Hand/SlAiHandObject.h"
 
+#include "ConstructorHelpers.h"
 #include "SlAiDataHandle.h"
 #include "SlAiEnemyCharacter.h"
 #include "Components/BoxComponent.h"
@@ -14,6 +15,8 @@
 #include "Hand/SlAiHandStone.h"
 #include "Hand/SlAiHandSword.h"
 #include "Hand/SlAiHandWood.h"
+#include "Kismet/GameplayStatics.h"
+#include "Sound/SoundWave.h"
 
 
 // Sets default values
@@ -44,6 +47,9 @@ ASlAiHandObject::ASlAiHandObject()
 	FScriptDelegate OverlayEnd;
 	OverlayEnd.BindUFunction(this,"OnOverlayEnd");
 	AffectCollision->OnComponentEndOverlap.Add(OverlayEnd);
+
+	static ConstructorHelpers::FObjectFinder<USoundWave> StaticSound(TEXT("SoundWave'/Game/Res/Sound/GameSound/Punch.Punch'"));
+	OverlaySound = StaticSound.Object;
 }
 
 void ASlAiHandObject::OnOverlayBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -53,6 +59,11 @@ void ASlAiHandObject::OnOverlayBegin(UPrimitiveComponent* OverlappedComponent, A
 	{
 		TSharedPtr<ObjectAttr> ObjectAttr = *SlAiDataHandle::Get()->ObjectAttrMap.Find(ObjectIndex);
 		Cast<ASlAiEnemyCharacter>(OtherActor)->AcceptDamage(ObjectAttr->AnimalAttack);
+	}
+	
+	if (OverlaySound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), OverlaySound, OtherActor->GetActorLocation());
 	}
 }
 

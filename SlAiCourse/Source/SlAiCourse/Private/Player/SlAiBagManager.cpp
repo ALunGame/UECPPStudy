@@ -300,9 +300,42 @@ bool SlAiBagManager::EatUpEvent(int ShortcutID)
 	return false;
 }
 
+void SlAiBagManager::LoadRecord(TArray<int32>* InputIndex, TArray<int32>* InputNum, TArray<int32>* NormalIndex,
+	TArray<int32>* NormalNum, TArray<int32>* ShortcutIndex, TArray<int32>* ShortcutNum)
+{
+	for (int i = 0; i < InputContainerList.Num(); ++i)
+	{
+		if ((*InputIndex)[i] != 0) InputContainerList[i]->ResetContainerPara((*InputIndex)[i], (*InputNum)[i]);
+	}
+	for (int i = 0; i < NormalContainerList.Num(); ++i) {
+		if ((*NormalIndex)[i] != 0) NormalContainerList[i]->ResetContainerPara((*NormalIndex)[i], (*NormalNum)[i]);
+	}
+	for (int i = 0; i < ShortcutContainerList.Num(); ++i) {
+		if ((*ShortcutIndex)[i] != 0) ShortcutContainerList[i]->ResetContainerPara((*ShortcutIndex)[i], (*ShortcutNum)[i]);
+	}
+}
+
+void SlAiBagManager::SaveData(TArray<int32>& InputIndex, TArray<int32>& InputNum, TArray<int32>& NormalIndex,
+	TArray<int32>& NormalNum, TArray<int32>& ShortcutIndex, TArray<int32>& ShortcutNum)
+{
+	for (int i = 0; i < InputContainerList.Num(); ++i)
+	{
+		InputIndex.Add(InputContainerList[i]->GetIndex());
+		InputNum.Add(InputContainerList[i]->GetNum());
+	}
+	for (int i = 0; i < NormalContainerList.Num(); ++i) {
+		NormalIndex.Add(NormalContainerList[i]->GetIndex());
+		NormalNum.Add(NormalContainerList[i]->GetNum());
+	}
+	for (int i = 0; i < ShortcutContainerList.Num(); ++i) {
+		ShortcutIndex.Add(ShortcutContainerList[i]->GetIndex());
+		ShortcutNum.Add(ShortcutContainerList[i]->GetNum());
+	}
+}
+
 SlAiBagManager::SlAiBagManager()
 {
-	ObjectIndex = 3;
-	ObjectNum = 1;
+	ObjectIndex = 0;
+	ObjectNum = 0;
 }
 

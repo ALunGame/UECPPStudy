@@ -3,6 +3,7 @@
 
 #include "Data/SlAiDataHandle.h"
 
+#include "AudioDevice.h"
 #include "SiAiJsonSystem.h"
 #include "SlAiGameWidgetStyle.h"
 #include "SlAiHelper.h"
@@ -156,11 +157,48 @@ void SlAiDataHandle::ResetMenuVolume(float MusicVol, float SoundVol)
 	SaveRecordData();
 }
 
+void SlAiDataHandle::ResetGameVolume(float MusicVol, float SoundVol)
+{
+	if (MusicVol > 0)
+	{
+		MusicVolume = MusicVol;
+		AudioDevice->SetSoundMixClassOverride(SlAiSoundMix,SlAiMusicClass,MusicVolume,1.f,0.2f,false);
+	}
+	if (SoundVol > 0)
+	{
+		SoundVolume = SoundVol;
+		AudioDevice->SetSoundMixClassOverride(SlAiSoundMix,SlAiSoundClass,SoundVolume,1.f,0.2f,false);
+	}
+	SaveRecordData();
+}
+
 void SlAiDataHandle::InitGameData()
 {
 	InitObjectAttr();
 	InitResourceAttr();
 	InitCompoundTableMap();
+	InitGameAudio();
+}
+
+void SlAiDataHandle::AddNewRecord()
+{
+	RecordDataList.Add(RecordName);
+	SaveRecordData();
+}
+
+void SlAiDataHandle::InitGameAudio()
+{
+	SlAiSoundMix = LoadObject<USoundMix>(nullptr, TEXT("SoundMix'/Game/Blueprint/Sound/SlAiSoundMix.SlAiSoundMix'"));
+	SlAiMusicClass = LoadObject<USoundClass>(nullptr, TEXT("SoundClass'/Game/Blueprint/Sound/SlAiMusicClass.SlAiMusicClass'"));
+	SlAiSoundClass = LoadObject<USoundClass>(nullptr, TEXT("SoundClass'/Game/Blueprint/Sound/SlAiSoundClass.SlAiSoundClass'"));
+
+	//音乐设备
+	AudioDevice = GEngine->GetMainAudioDeviceRaw();
+
+	//推送混音器到设备
+	AudioDevice->PushSoundMixModifier(SlAiSoundMix);
+
+	ResetGameVolume(MusicVolume,SoundVolume);
 }
 
 SlAiDataHandle::SlAiDataHandle()

@@ -44,8 +44,11 @@ void ASlAiPlayerState::Tick(float DeltaSeconds)
 	}
 	else
 	{
-		Hunger -= DeltaSeconds * 2;
-		HP += DeltaSeconds;
+		if (!IsDead)
+		{
+			Hunger -= DeltaSeconds * 2;
+			HP += DeltaSeconds;
+		}
 	}
 
 	//设定范围
@@ -58,6 +61,10 @@ void ASlAiPlayerState::Tick(float DeltaSeconds)
 	if (HP == 0.f && !IsDead)
 	{
 		IsDead = true;
+		if (SPController)
+		{
+			SPController->PlayerDead();
+		}
 	}
 }
 
@@ -158,11 +165,30 @@ void ASlAiPlayerState::AcceptDamage(int DamageVal)
 	if (HP == 0.F && !IsDead)
 	{
 		IsDead = true;
+		if (SPController)
+		{
+			SPController->PlayerDead();
+		}
 	}
 	else
 	{
 		
 	}
+}
+
+void ASlAiPlayerState::LoadState(float HPVal, float HungryVal)
+{
+	HP = HPVal;
+	Hunger = HungryVal;
+
+	//执行委托
+	UpdateStateWidget.ExecuteIfBound(HP/500.f,Hunger/600.f);
+}
+
+void ASlAiPlayerState::SaveState(float& PlayerHP, float& PlayerHunger)
+{
+	PlayerHP = HP;
+	PlayerHunger = Hunger;
 }
 
 void ASlAiPlayerState::BeginPlay()

@@ -24,6 +24,8 @@ ASlAiPickupObject::ASlAiPickupObject()
 
 	//开启交互检测
 	BaseMesh->SetGenerateOverlapEvents(true);
+
+	IsDestroyNextTick = false;
 }
 
 // Called when the game starts or when spawned
@@ -37,6 +39,12 @@ void ASlAiPickupObject::BeginPlay()
 void ASlAiPickupObject::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (IsDestroyNextTick)
+	{
+		GetWorld()->DestroyActor(this);
+		IsDestroyNextTick = false;
+	}
 }
 
 FText ASlAiPickupObject::GetInfoText() const

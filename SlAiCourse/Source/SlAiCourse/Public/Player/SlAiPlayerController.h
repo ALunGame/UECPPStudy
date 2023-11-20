@@ -154,7 +154,13 @@ public:
 	 */
 	void ChangeHandObject();
 
+	//死亡
+	void PlayerDead();
+
+	void DeadTimeOut();
+
 protected:
+	
 	virtual void BeginPlay() override;
 
 private:
@@ -170,6 +176,7 @@ private:
 
 	//缩放状态
 	EMiniMapSizeMode::Type MiniMapSizeMode;
+	FTimerHandle DeadHandle;
 
 private:
 

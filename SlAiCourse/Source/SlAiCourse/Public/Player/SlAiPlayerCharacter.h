@@ -88,6 +88,8 @@ public:
 
 	FVector GetCameraPos();
 
+	float PlayDeadAnim();
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -98,5 +100,7 @@ private:
 		USkeletalMeshComponent* MeshFirst;
 
 	UPROPERTY(VisibleDefaultsOnly, Category = "SlAi")
-		UChildActorComponent* HandObject; 
+		UChildActorComponent* HandObject;
+
+	class UAnimationAsset* AnimDead;
 };

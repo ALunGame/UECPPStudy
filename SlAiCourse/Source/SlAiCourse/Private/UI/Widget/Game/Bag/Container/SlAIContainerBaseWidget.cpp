@@ -46,6 +46,28 @@ void SlAIContainerBaseWidget::Construct(const FArguments& InArgs)
 	];
 }
 
+void SlAIContainerBaseWidget::ResetContainerPara(int ObjectID, int Num)
+{
+	if (ObjectIndex != ObjectID) ObjectImage->SetBorderImage(SlAiDataHandle::Get()->ObjectBrushList[ObjectID]);
+
+	ObjectIndex = ObjectID;
+	ObjectNum = Num;
+	
+	if (ObjectIndex == 0) {
+		ObjectNumText->SetText(FText::FromString(""));
+	}
+	else 
+	{
+		if (MultiplyAble(ObjectIndex)) {
+			ObjectNumText->SetText(FText::FromString(FString::FromInt(ObjectNum)));
+		}
+		else 
+		{
+			ObjectNumText->SetText(FText::FromString(""));
+		}
+	}
+}
+
 TSharedPtr<SlAIContainerBaseWidget> SlAIContainerBaseWidget::CreateContainer(EContainerType::Type NeedType, int WorkID)
 {
 	TSharedPtr<SlAIContainerBaseWidget> Result;
